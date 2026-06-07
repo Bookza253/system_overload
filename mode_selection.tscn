@@ -1,0 +1,50 @@
+[gd_scene format=3 uid="uid://crog5yh3dkij7"]
+
+[ext_resource type="Script" uid="uid://cpdb85003re3u" path="res://mode_selection.gd" id="1_a3mlw"]
+
+[node name="ModeSelection" type="Control" unique_id=1208711110]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_a3mlw")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="." unique_id=1238480260]
+layout_mode = 0
+offset_left = 388.0
+offset_top = 267.0
+offset_right = 733.0
+offset_bottom = 411.0
+
+[node name="TrainingButton" type="Button" parent="VBoxContainer" unique_id=1940807639]
+layout_mode = 2
+text = "🟢 Training Mode"
+
+[node name="TrainingSubMenu" type="VBoxContainer" parent="VBoxContainer" unique_id=229880440]
+visible = false
+layout_mode = 2
+
+[node name="NetworkButton" type="Button" parent="VBoxContainer/TrainingSubMenu" unique_id=872585088]
+layout_mode = 2
+text = "Cyber Security"
+
+[node name="SystemButton" type="Button" parent="VBoxContainer/TrainingSubMenu" unique_id=459025182]
+layout_mode = 2
+text = "Operating System"
+
+[node name="Button_Router_Topic" type="Button" parent="VBoxContainer/TrainingSubMenu" unique_id=287480755]
+layout_mode = 2
+text = "Computer Network"
+
+[node name="Button_PDPA_Topic" type="Button" parent="VBoxContainer/TrainingSubMenu" unique_id=1410389049]
+layout_mode = 2
+text = "Computer Law & PDPA"
+
+[node name="MixModeButton" type="Button" parent="VBoxContainer" unique_id=107611570]
+layout_mode = 2
+text = "🔴 SYSTEM OVERLOAD (MIX)"
+
+[connection signal="pressed" from="VBoxContainer/TrainingSubMenu/Button_Router_Topic" to="." method="_on_button_router_topic_pressed"]
+[connection signal="pressed" from="VBoxContainer/TrainingSubMenu/Button_PDPA_Topic" to="." method="_on_button_pdpa_topic_pressed"]

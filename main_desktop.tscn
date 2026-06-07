@@ -1,0 +1,110 @@
+[gd_scene format=3 uid="uid://dgr42hxq62v5a"]
+
+[ext_resource type="Texture2D" uid="uid://ddxmxgyyfy8mn" path="res://icon.svg" id="1_pyqms"]
+[ext_resource type="Script" uid="uid://cqyrek2e5a23l" path="res://main_desktop.gd" id="1_xr4pk"]
+[ext_resource type="PackedScene" uid="uid://brfr3h82mx1pa" path="res://task_manager_module.tscn" id="2_xr4pk"]
+[ext_resource type="PackedScene" uid="uid://cnm2osc2jrxli" path="res://firewall_module.tscn" id="4_f4ip0"]
+[ext_resource type="PackedScene" uid="uid://cnsch1bd3k5mo" path="res://router_module.tscn" id="5_xjri4"]
+[ext_resource type="PackedScene" uid="uid://c6ykx7s1r1a48" path="res://pdpa_module.tscn" id="6_btvhs"]
+
+[node name="MainDesktop" type="Control" unique_id=1783687923]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_xr4pk")
+
+[node name="ColorRect" type="ColorRect" parent="." unique_id=1718778005]
+layout_mode = 0
+offset_right = 1152.0
+offset_bottom = 648.0
+color = Color(0.101960786, 0.16862746, 0.29803923, 1)
+
+[node name="ColorRect2" type="ColorRect" parent="." unique_id=1692232325]
+layout_mode = 0
+offset_top = 619.0
+offset_right = 1152.0
+offset_bottom = 648.0
+color = Color(0.11764706, 0.11764706, 0.11764706, 1)
+
+[node name="Label" type="Label" parent="." unique_id=2039212124]
+layout_mode = 0
+offset_left = 312.0
+offset_top = 271.0
+offset_right = 872.0
+offset_bottom = 354.0
+theme_override_font_sizes/font_size = 60
+text = "SYSTEM OVERLOAD"
+
+[node name="Button_TaskManager_Mod" type="Button" parent="." unique_id=802173448]
+layout_mode = 0
+offset_left = 3.0
+offset_top = 3.0
+offset_right = 71.0
+offset_bottom = 70.0
+icon = ExtResource("1_pyqms")
+expand_icon = true
+
+[node name="Button_Firewall" type="Button" parent="." unique_id=1017060860]
+layout_mode = 0
+offset_left = 2.0
+offset_top = 76.0
+offset_right = 70.0
+offset_bottom = 143.0
+icon = ExtResource("1_pyqms")
+expand_icon = true
+
+[node name="Button_Router" type="Button" parent="." unique_id=875990078]
+layout_mode = 0
+offset_left = 2.0
+offset_top = 151.0
+offset_right = 70.0
+offset_bottom = 220.0
+icon = ExtResource("1_pyqms")
+expand_icon = true
+
+[node name="Button_PDPA" type="Button" parent="." unique_id=307648688]
+layout_mode = 0
+offset_left = 5.0
+offset_top = 225.0
+offset_right = 70.0
+offset_bottom = 294.0
+icon = ExtResource("1_pyqms")
+expand_icon = true
+
+[node name="TaskManager_Module" parent="." unique_id=130243921 instance=ExtResource("2_xr4pk")]
+visible = false
+layout_mode = 1
+offset_left = 4.0
+offset_top = -2.0
+offset_right = 4.0
+offset_bottom = -2.0
+
+[node name="Firewall_Module" parent="." unique_id=483616568 instance=ExtResource("4_f4ip0")]
+visible = false
+layout_mode = 1
+offset_left = 1.0
+offset_top = 1.0
+offset_right = 1.0
+offset_bottom = 1.0
+
+[node name="Router_Module" parent="." unique_id=269885670 instance=ExtResource("5_xjri4")]
+visible = false
+layout_mode = 1
+offset_top = -1.0
+offset_bottom = -1.0
+
+[node name="PDPA_Module" parent="." unique_id=771819813 instance=ExtResource("6_btvhs")]
+visible = false
+layout_mode = 1
+offset_left = 2.0
+offset_top = 3.0
+offset_right = 2.0
+offset_bottom = 3.0
+
+[connection signal="pressed" from="Button_TaskManager_Mod" to="." method="_on_button_pressed"]
+[connection signal="pressed" from="Button_Firewall" to="." method="_on_button_firewall_pressed"]
+[connection signal="pressed" from="Button_Router" to="." method="_on_button_router_pressed"]
+[connection signal="pressed" from="Button_PDPA" to="." method="_on_button_pdpa_pressed"]

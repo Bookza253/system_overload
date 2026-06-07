@@ -1,0 +1,106 @@
+[gd_scene format=3 uid="uid://brfr3h82mx1pa"]
+
+[ext_resource type="Script" uid="uid://1c4yy0vf34kc" path="res://task_manager_module.gd" id="1_gk2va"]
+
+[node name="TaskManager_Module" type="Control" unique_id=130243921]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+pivot_offset = Vector2(3, 10)
+script = ExtResource("1_gk2va")
+
+[node name="Panel" type="Panel" parent="." unique_id=86829188]
+layout_mode = 0
+offset_left = 356.0
+offset_top = 152.0
+offset_right = 765.0
+offset_bottom = 453.0
+pivot_offset = Vector2(40, 38)
+
+[node name="Label" type="Label" parent="Panel" unique_id=1543407574]
+layout_mode = 0
+offset_left = -354.0
+offset_top = 403.0
+offset_right = 105.0
+offset_bottom = 452.0
+text = "URGENT: พบไวรัสแฝงตัวในระบบ 5 ตัว กำจัดด่วน!
+WARNING: ห้ามปิดการทำงานของไฟล์ระบบ (System32) เด็ดขาด!"
+
+[node name="ProgressBar" type="ProgressBar" parent="Panel" unique_id=1316593849]
+layout_mode = 0
+offset_left = 1.0
+offset_top = 1.0
+offset_right = 406.0
+offset_bottom = 28.0
+value = 50.0
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Panel" unique_id=168739785]
+layout_mode = 0
+offset_left = 1.0
+offset_top = 49.0
+offset_right = 405.0
+offset_bottom = 290.0
+
+[node name="Button1" type="Button" parent="Panel/VBoxContainer" unique_id=676372535]
+layout_mode = 2
+text = "homework_destroyer.bat"
+
+[node name="Button5" type="Button" parent="Panel/VBoxContainer" unique_id=1069443288]
+layout_mode = 2
+text = "win32.trojan.gen.exe"
+
+[node name="Button6" type="Button" parent="Panel/VBoxContainer" unique_id=709264646]
+layout_mode = 2
+text = "download_more_ram.sys"
+
+[node name="Button7" type="Button" parent="Panel/VBoxContainer" unique_id=1558459261]
+layout_mode = 2
+text = "rootkit_installer.dll"
+
+[node name="Button2" type="Button" parent="Panel/VBoxContainer" unique_id=176317952]
+layout_mode = 2
+text = "free_robux_generator.exe"
+
+[node name="Button3" type="Button" parent="Panel/VBoxContainer" unique_id=209345098]
+layout_mode = 2
+text = "System32.dll"
+
+[node name="Button4" type="Button" parent="Panel/VBoxContainer" unique_id=771170331]
+layout_mode = 2
+text = "Windows_Defender.exe"
+
+[node name="ColorRect" type="ColorRect" parent="." unique_id=272214734]
+visible = false
+layout_mode = 0
+offset_right = 1151.0
+offset_bottom = 647.0
+color = Color(0, 0.23529412, 1, 1)
+
+[node name="ErrorText" type="Label" parent="ColorRect" unique_id=172481047]
+layout_mode = 0
+offset_left = 28.0
+offset_top = 29.0
+offset_right = 210.0
+offset_bottom = 84.0
+theme_override_font_sizes/font_size = 40
+text = "ErrorText"
+
+[node name="RestartButton" type="Button" parent="ColorRect" unique_id=103296359]
+layout_mode = 0
+offset_left = 494.0
+offset_top = 489.0
+offset_right = 693.0
+offset_bottom = 565.0
+text = "[ TRY AGAIN ]"
+
+[connection signal="pressed" from="Panel/VBoxContainer/Button1" to="." method="_on_button_1_pressed"]
+[connection signal="pressed" from="Panel/VBoxContainer/Button5" to="." method="_on_button_5_pressed"]
+[connection signal="pressed" from="Panel/VBoxContainer/Button6" to="." method="_on_button_6_pressed"]
+[connection signal="pressed" from="Panel/VBoxContainer/Button7" to="." method="_on_button_7_pressed"]
+[connection signal="pressed" from="Panel/VBoxContainer/Button2" to="." method="_on_button_2_pressed"]
+[connection signal="pressed" from="Panel/VBoxContainer/Button3" to="." method="_on_button_3_pressed"]
+[connection signal="pressed" from="Panel/VBoxContainer/Button4" to="." method="_on_button_4_pressed"]
+[connection signal="pressed" from="ColorRect/RestartButton" to="." method="_on_restart_button_pressed"]

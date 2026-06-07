@@ -1,0 +1,7 @@
+[gd_scene format=3 uid="uid://ccp5dvtpxy0rs"]
+
+[node name="BootUI" type="Node" unique_id=2041712546]
+
+[node name="Label" type="Label" parent="." unique_id=1572411730]
+offset_right = 585.0
+offset_bottom = 275.0

@@ -1,0 +1,60 @@
+[gd_scene format=3 uid="uid://c0ojjwu7835nw"]
+
+[ext_resource type="Script" uid="uid://b8nc7lhggfv3f" path="res://start_screen.gd" id="1_ncxyx"]
+[ext_resource type="Texture2D" uid="uid://cuilaoqkasct4" path="res://6f1ee9be-c9e6-4c65-80e1-700e6e22472c.png" id="2_pevhg"]
+[ext_resource type="Texture2D" uid="uid://dmbe2usygd66b" path="res://8ddccc72-1f2d-437d-b786-60fd855a65de.png" id="3_afy8x"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_afy8x"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_k1na2"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_vdywr"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_cdgt5"]
+
+[node name="StartScreen" type="Control" unique_id=1320610778]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_ncxyx")
+
+[node name="BootUI" type="Control" parent="." unique_id=376523084]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_right = -1152.0
+offset_bottom = -648.0
+
+[node name="TextureRect" type="TextureRect" parent="BootUI" unique_id=418921653]
+layout_mode = 0
+offset_right = 1152.0
+offset_bottom = 648.0
+texture = ExtResource("2_pevhg")
+expand_mode = 1
+
+[node name="LoginUI" type="Control" parent="." unique_id=58848006]
+anchors_preset = 0
+
+[node name="TextureRect" type="TextureRect" parent="LoginUI" unique_id=928409350]
+layout_mode = 0
+offset_right = 1152.0
+offset_bottom = 648.0
+texture = ExtResource("3_afy8x")
+expand_mode = 1
+
+[node name="Button" type="Button" parent="LoginUI" unique_id=1229635458]
+layout_mode = 0
+offset_left = 461.0
+offset_top = 503.0
+offset_right = 690.0
+offset_bottom = 543.0
+theme_override_styles/normal = SubResource("StyleBoxEmpty_afy8x")
+theme_override_styles/pressed = SubResource("StyleBoxEmpty_k1na2")
+theme_override_styles/hover = SubResource("StyleBoxEmpty_vdywr")
+theme_override_styles/focus = SubResource("StyleBoxEmpty_cdgt5")
+
+[connection signal="pressed" from="LoginUI/Button" to="." method="_on_button_pressed"]
