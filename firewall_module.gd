@@ -135,4 +135,4 @@ func trigger_game_over(reason_text):
 
 # 🔄 ย้อนคืนความถูกต้องให้ปุ่มเกิดใหม่วาร์ปกลับไปหน้าแรกสุดตามที่คุณต้องการ
 func _on_restart_button_pressed():
-	get_tree().change_scene_to_file("res://start_screen.tscn")
+	get_tree().change_scene_to_file("res://mode_selection.tscn")

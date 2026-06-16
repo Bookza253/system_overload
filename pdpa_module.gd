@@ -99,4 +99,4 @@ func trigger_game_over(reason_text):
 
 # 🔄 ปุ่ม RESTART บนหน้าจอฟ้า
 func _on_restart_button_pressed():
-	get_tree().change_scene_to_file("res://start_screen.tscn")
+	get_tree().change_scene_to_file("res://mode_selection.tscn")

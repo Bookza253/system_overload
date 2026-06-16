@@ -99,4 +99,4 @@ func shuffle_buttons():
 
 func _on_restart_button_pressed():
 	# 🔄 วาร์ปกลับไปเริ่มระบบปฏิบัติการใหม่ตั้งแต่หน้าเปิดเครื่อง (Boot Screen)
-	get_tree().change_scene_to_file("res://start_screen.tscn")
+	get_tree().change_scene_to_file("res://mode_selection.tscn")
