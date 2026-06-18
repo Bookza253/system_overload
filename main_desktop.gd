@@ -7,43 +7,47 @@ extends Control
 @onready var win_vlan = $Window_VLAN 
 
 func _ready():
-	# 🔒 สั่งซ่อนหน้าต่าง Window ทั้งหมดตอนเริ่มเกมก่อน (ป้องกันการเด้งซ้อนกัน)
-	win_task_manager.hide()
-	win_router.hide()
-	win_firewall.hide()
-	win_vlan.hide()
+	# 🔒 ซ่อนหน้าต่าง Popup ทั้งหมดก่อน
+	if win_task_manager: win_task_manager.hide()
+	if win_router: win_router.hide()
+	if win_firewall: win_firewall.hide()
+	if win_vlan: win_vlan.hide()
 	
+	# 🔒 ซ่อนปุ่มไอคอนทั้งหมดบน Desktop ไว้ก่อน เพื่อรอเปิดตามโหมด
+	_hide_all_desktop_buttons()
+	
+	# 🎮 ตรวจสอบเงื่อนไขโหมดที่ถูกส่งมาจากหน้าเลือกโหมด
 	if Global.is_mix_mode:
-		# 🔴 ถ้าเป็นโหมดผสม: เปิดให้เห็นไอคอนเลือกแอปครบทุกตัวบน Desktop
-		$Button_TaskManager_M.show()
-		$Button_Firewall.show()
-		$Button_Router.show()
-		$Button_PDPA.show() # 💡 พาร์ท UI ปุ่มบน Desktop ค่อยไปเปลี่ยน Text ในแอป Canva/Godot ให้เป็นชื่อ VLAN นะครับ
+		# โหมดผสม: โชว์ไอคอนแอปทั้งหมด
+		_show_button("Button_TaskManager_M")
+		_show_button("Button_Firewall")
+		_show_button("Button_Router")
+		_show_button("Button_PDPA") 
 	else:
-		# 🟢 ถ้าเลือกโหมดฝึกซ้อมแยกวิชา (เปิดโชว์เฉพาะปุ่มที่เลือกเรียน)
-		if Global.selected_topic == "network":
-			$Button_Firewall.show()
-			$Button_TaskManager_M.hide()
-			$Button_Router.hide()
-			$Button_PDPA.hide()
-			
-		elif Global.selected_topic == "task_manager":
-			$Button_Firewall.hide()
-			$Button_TaskManager_M.show()
-			$Button_Router.hide()
-			$Button_PDPA.hide()
-			
-		elif Global.selected_topic == "router":
-			$Button_Firewall.hide()
-			$Button_TaskManager_M.hide()
-			$Button_Router.show()
-			$Button_PDPA.hide()
-			
-		elif Global.selected_topic == "vlan": # 🌟 เปลี่ยนชื่อเคสลงทะเบียนจาก pdpa เป็น vlan
-			$Button_Firewall.hide()
-			$Button_TaskManager_M.hide()
-			$Button_Router.hide()
-			$Button_PDPA.show()
+		# โหมดแยกวิชา: โชว์เฉพาะปุ่มที่เลือกเรียน
+		match Global.selected_topic:
+			"network":
+				_show_button("Button_Firewall")
+			"task_manager":
+				_show_button("Button_TaskManager_M")
+			"router":
+				_show_button("Button_Router")
+			"vlan":
+				_show_button("Button_PDPA") # ปุ่มเปิดแอปวิชา VLAN
+
+# ฟังก์ชันช่วยซ่อนปุ่มแบบปลอดภัย
+func _hide_all_desktop_buttons():
+	if has_node("Button_TaskManager_M"): $Button_TaskManager_M.hide()
+	if has_node("Button_Firewall"): $Button_Firewall.hide()
+	if has_node("Button_Router"): $Button_Router.hide()
+	if has_node("Button_PDPA"): $Button_PDPA.hide()
+
+# ฟังก์ชันช่วยเปิดปุ่มแบบปลอดภัย (เช็กก่อนเปิด เกมจะได้ไม่เด้ง)
+func _show_button(button_name: String):
+	if has_node(button_name):
+		get_node(button_name).show()
+	else:
+		print("🚨 คำเตือน: หา Node ปุ่มที่ชื่อว่า ", button_name, " ไม่เจอในหน้า Desktop")
 
 # =========================================================
 # 🖱️ SECTION: ฟังก์ชันเมื่อคลิกปุ่มไอคอนบนหน้าจอ Desktop 

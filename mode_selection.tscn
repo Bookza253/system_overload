@@ -1,6 +1,7 @@
 [gd_scene format=3 uid="uid://crog5yh3dkij7"]
 
 [ext_resource type="Script" uid="uid://cpdb85003re3u" path="res://mode_selection.gd" id="1_a3mlw"]
+[ext_resource type="Texture2D" uid="uid://cuilaoqkasct4" path="res://6f1ee9be-c9e6-4c65-80e1-700e6e22472c.png" id="2_1qyy4"]
 
 [node name="ModeSelection" type="Control" unique_id=1208711110]
 layout_mode = 3
@@ -47,6 +48,11 @@ text = "Computer Law & PDPA"
 [node name="MixModeButton" type="Button" parent="VBoxContainer" unique_id=107611570]
 layout_mode = 2
 text = "🔴 SYSTEM OVERLOAD (MIX)"
+
+[node name="6f1Ee9BeC9e64c6580e1700e6e22472c" type="Sprite2D" parent="." unique_id=596526633]
+visible = false
+position = Vector2(908, 572)
+texture = ExtResource("2_1qyy4")
 
 [connection signal="pressed" from="VBoxContainer/TrainingSubMenu/Button_Router_Topic" to="." method="_on_button_router_topic_pressed"]
 [connection signal="pressed" from="VBoxContainer/TrainingSubMenu/Button_PDPA_Topic" to="." method="_on_button_pdpa_topic_pressed"]
