@@ -10,13 +10,15 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_12joa")
+metadata/_edit_horizontal_guides_ = [541.0]
+metadata/_edit_vertical_guides_ = [961.0]
 
 [node name="Panel" type="Panel" parent="." unique_id=1665129569]
 layout_mode = 0
-offset_left = 139.0
-offset_top = 90.0
-offset_right = 1009.0
-offset_bottom = 489.0
+offset_left = 559.0
+offset_top = 240.0
+offset_right = 1359.0
+offset_bottom = 840.0
 
 [node name="Label2" type="Label" parent="Panel" unique_id=1730684003]
 layout_mode = 0

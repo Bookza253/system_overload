@@ -7,16 +7,22 @@ layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+offset_left = 554.0
+offset_top = 315.0
+offset_right = -566.0
+offset_bottom = -165.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_edew7")
+metadata/_edit_horizontal_guides_ = [540.0]
+metadata/_edit_vertical_guides_ = [959.0]
 
 [node name="Panel" type="Panel" parent="." unique_id=1210043680]
 layout_mode = 0
-offset_left = -1.0
-offset_top = -1.0
-offset_right = 694.0
-offset_bottom = 647.0
+offset_left = 8.0
+offset_top = -72.0
+offset_right = 808.0
+offset_bottom = 528.0
 
 [node name="Label_Title" type="Label" parent="Panel" unique_id=270431833]
 layout_mode = 0
@@ -60,17 +66,17 @@ text = "ปุ่มกดปฏิเสธ"
 
 [node name="ManualPanel" type="Panel" parent="Panel" unique_id=753187217]
 layout_mode = 0
-offset_left = 701.0
-offset_top = 179.0
-offset_right = 1150.0
-offset_bottom = 337.0
+offset_left = 345.0
+offset_top = 340.0
+offset_right = 794.0
+offset_bottom = 498.0
 
 [node name="Label_ManualText" type="Label" parent="Panel/ManualPanel" unique_id=360716521]
 layout_mode = 0
-offset_left = 4.0
-offset_top = 12.0
-offset_right = 448.0
-offset_bottom = 151.0
+offset_left = 5.0
+offset_top = 9.0
+offset_right = 449.0
+offset_bottom = 148.0
 text = "[ PRIVACY POLICY MANUAL ]
 • พนักงานฝึกงาน (Intern) -> ดูได้เฉพาะ Public Data
 • ฝ่ายบุคคล (HR) -> ดูประวัติพนักงานได้

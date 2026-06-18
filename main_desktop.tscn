@@ -15,28 +15,32 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_xr4pk")
+metadata/_edit_horizontal_guides_ = [541.0]
+metadata/_edit_vertical_guides_ = [961.0]
 
 [node name="ColorRect" type="ColorRect" parent="." unique_id=1718778005]
 layout_mode = 0
-offset_right = 1152.0
-offset_bottom = 648.0
+offset_right = 1920.0
+offset_bottom = 1080.0
 color = Color(0.101960786, 0.16862746, 0.29803923, 1)
 
 [node name="ColorRect2" type="ColorRect" parent="." unique_id=1692232325]
 layout_mode = 0
-offset_top = 619.0
-offset_right = 1152.0
-offset_bottom = 648.0
+offset_top = 1048.0
+offset_right = 1920.0
+offset_bottom = 1080.0
 color = Color(0.11764706, 0.11764706, 0.11764706, 1)
 
 [node name="Label" type="Label" parent="." unique_id=2039212124]
 layout_mode = 0
-offset_left = 312.0
-offset_top = 271.0
-offset_right = 872.0
-offset_bottom = 354.0
+offset_left = 678.0
+offset_top = 495.0
+offset_right = 1238.0
+offset_bottom = 578.0
 theme_override_font_sizes/font_size = 60
 text = "SYSTEM OVERLOAD"
+horizontal_alignment = 1
+vertical_alignment = 1
 
 [node name="Button_TaskManager_Mod" type="Button" parent="." unique_id=802173448]
 layout_mode = 0
@@ -74,31 +78,57 @@ offset_bottom = 294.0
 icon = ExtResource("1_pyqms")
 expand_icon = true
 
-[node name="TaskManager_Module" parent="." unique_id=130243921 instance=ExtResource("2_xr4pk")]
+[node name="Window_Router" type="Window" parent="." unique_id=727529807]
+oversampling_override = 1.0
+initial_position = 2
+size = Vector2i(800, 600)
 visible = false
-layout_mode = 1
-offset_left = 4.0
+transient = true
+
+[node name="Router_Module" parent="Window_Router" unique_id=269885670 instance=ExtResource("5_xjri4")]
+visible = false
+offset_left = -1.0
 offset_top = -2.0
-offset_right = 4.0
+offset_right = -1.0
 offset_bottom = -2.0
 
-[node name="Firewall_Module" parent="." unique_id=483616568 instance=ExtResource("4_f4ip0")]
+[node name="Window_TaskManager" type="Window" parent="." unique_id=725908218]
+oversampling_override = 1.0
+initial_position = 2
+size = Vector2i(800, 600)
 visible = false
-layout_mode = 1
+transient = true
+
+[node name="TaskManager_Module" parent="Window_TaskManager" unique_id=130243921 instance=ExtResource("2_xr4pk")]
+visible = false
+offset_left = -1.0
+offset_top = -20.0
+offset_right = -1.0
+offset_bottom = -20.0
+
+[node name="Window_Firewall" type="Window" parent="." unique_id=1620434941]
+oversampling_override = 1.0
+initial_position = 2
+size = Vector2i(800, 600)
+visible = false
+transient = true
+
+[node name="Firewall_Module" parent="Window_Firewall" unique_id=483616568 instance=ExtResource("4_f4ip0")]
+visible = false
 offset_left = 1.0
 offset_top = 1.0
 offset_right = 1.0
 offset_bottom = 1.0
 
-[node name="Router_Module" parent="." unique_id=269885670 instance=ExtResource("5_xjri4")]
+[node name="Window_VLAN" type="Window" parent="." unique_id=1728370338]
+oversampling_override = 1.0
+initial_position = 2
+size = Vector2i(800, 600)
 visible = false
-layout_mode = 1
-offset_top = -1.0
-offset_bottom = -1.0
+transient = true
 
-[node name="PDPA_Module" parent="." unique_id=771819813 instance=ExtResource("6_btvhs")]
+[node name="PDPA_Module" parent="Window_VLAN" unique_id=771819813 instance=ExtResource("6_btvhs")]
 visible = false
-layout_mode = 1
 offset_left = 2.0
 offset_top = 3.0
 offset_right = 2.0
@@ -108,3 +138,7 @@ offset_bottom = 3.0
 [connection signal="pressed" from="Button_Firewall" to="." method="_on_button_firewall_pressed"]
 [connection signal="pressed" from="Button_Router" to="." method="_on_button_router_pressed"]
 [connection signal="pressed" from="Button_PDPA" to="." method="_on_button_pdpa_pressed"]
+[connection signal="close_requested" from="Window_Router" to="." method="_on_window_router_close_requested"]
+[connection signal="close_requested" from="Window_TaskManager" to="." method="_on_window_task_manager_close_requested"]
+[connection signal="close_requested" from="Window_Firewall" to="." method="_on_window_firewall_close_requested"]
+[connection signal="close_requested" from="Window_VLAN" to="." method="_on_window_vlan_close_requested"]

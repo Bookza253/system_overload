@@ -28,11 +28,13 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 offset_right = -1152.0
 offset_bottom = -648.0
+grow_horizontal = 2
+grow_vertical = 2
 
 [node name="TextureRect" type="TextureRect" parent="BootUI" unique_id=418921653]
 layout_mode = 0
-offset_right = 1152.0
-offset_bottom = 648.0
+offset_right = 1920.0
+offset_bottom = 1080.0
 texture = ExtResource("2_pevhg")
 expand_mode = 1
 
@@ -41,17 +43,17 @@ anchors_preset = 0
 
 [node name="TextureRect" type="TextureRect" parent="LoginUI" unique_id=928409350]
 layout_mode = 0
-offset_right = 1152.0
-offset_bottom = 648.0
+offset_right = 1920.0
+offset_bottom = 1080.0
 texture = ExtResource("3_afy8x")
 expand_mode = 1
 
 [node name="Button" type="Button" parent="LoginUI" unique_id=1229635458]
 layout_mode = 0
-offset_left = 461.0
-offset_top = 503.0
-offset_right = 690.0
-offset_bottom = 543.0
+offset_left = 771.0
+offset_top = 842.0
+offset_right = 1144.0
+offset_bottom = 908.0
 theme_override_styles/normal = SubResource("StyleBoxEmpty_afy8x")
 theme_override_styles/pressed = SubResource("StyleBoxEmpty_k1na2")
 theme_override_styles/hover = SubResource("StyleBoxEmpty_vdywr")
