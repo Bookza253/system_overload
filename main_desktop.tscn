@@ -82,11 +82,9 @@ expand_icon = true
 oversampling_override = 1.0
 initial_position = 2
 size = Vector2i(800, 600)
-visible = false
 transient = true
 
 [node name="Router_Module" parent="Window_Router" unique_id=269885670 instance=ExtResource("5_xjri4")]
-visible = false
 offset_left = -1.0
 offset_top = -2.0
 offset_right = -1.0
@@ -96,11 +94,9 @@ offset_bottom = -2.0
 oversampling_override = 1.0
 initial_position = 2
 size = Vector2i(800, 600)
-visible = false
 transient = true
 
 [node name="TaskManager_Module" parent="Window_TaskManager" unique_id=130243921 instance=ExtResource("2_xr4pk")]
-visible = false
 offset_left = -1.0
 offset_top = -20.0
 offset_right = -1.0
@@ -110,11 +106,9 @@ offset_bottom = -20.0
 oversampling_override = 1.0
 initial_position = 2
 size = Vector2i(800, 600)
-visible = false
 transient = true
 
 [node name="Firewall_Module" parent="Window_Firewall" unique_id=483616568 instance=ExtResource("4_f4ip0")]
-visible = false
 offset_left = 1.0
 offset_top = 1.0
 offset_right = 1.0
@@ -124,11 +118,9 @@ offset_bottom = 1.0
 oversampling_override = 1.0
 initial_position = 2
 size = Vector2i(800, 600)
-visible = false
 transient = true
 
 [node name="PDPA_Module" parent="Window_VLAN" unique_id=771819813 instance=ExtResource("6_btvhs")]
-visible = false
 offset_left = 2.0
 offset_top = 3.0
 offset_right = 2.0
