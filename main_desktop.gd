@@ -3,96 +3,111 @@ extends Control
 @onready var win_task_manager = $Window_TaskManager
 @onready var win_router = $Window_Router
 @onready var win_firewall = $Window_Firewall
-# 🌟 เปลี่ยนจาก Window_PDPA มาเป็น Window_VLAN ตามธีม Network ใหม่
 @onready var win_vlan = $Window_VLAN 
 
+# =========================================================
+# 🚀 1. ลงทะเบียนฉากมินิเกมทั้งหมดเตรียมไว้
+# =========================================================
+const FIREWALL_TRAINING_SCENE = preload("res://firewall_module.tscn")
+const ROUTER_TRAINING_SCENE = preload("res://router_module.tscn")
+const VLAN_TRAINING_SCENE = preload("res://pdpa_module.tscn")
+const TASK_TRAINING_SCENE = preload("res://task_manager_module.tscn")
+
 func _ready():
-	# 🔒 ซ่อนหน้าต่าง Popup ทั้งหมดก่อน
+	# 🔒 ซ่อนหน้าต่าง Popup ทั้งหมดก่อนเมื่อเริ่ม
 	if win_task_manager: win_task_manager.hide()
 	if win_router: win_router.hide()
 	if win_firewall: win_firewall.hide()
 	if win_vlan: win_vlan.hide()
 	
-	# 🔒 ซ่อนปุ่มไอคอนทั้งหมดบน Desktop ไว้ก่อน เพื่อรอเปิดตามโหมด
-	_hide_all_desktop_buttons()
-	
-	# 🎮 ตรวจสอบเงื่อนไขโหมดที่ถูกส่งมาจากหน้าเลือกโหมด
-	if Global.is_mix_mode:
-		# โหมดผสม: โชว์ไอคอนแอปทั้งหมด
-		_show_button("Button_TaskManager_M")
-		_show_button("Button_Firewall")
-		_show_button("Button_Router")
-		_show_button("Button_PDPA") 
-	else:
-		# โหมดแยกวิชา: โชว์เฉพาะปุ่มที่เลือกเรียน
-		match Global.selected_topic:
-			"network":
-				_show_button("Button_Firewall")
-			"task_manager":
-				_show_button("Button_TaskManager_M")
-			"router":
-				_show_button("Button_Router")
-			"vlan":
-				_show_button("Button_PDPA") # ปุ่มเปิดแอปวิชา VLAN
+	# 🌟 โชว์ไอคอนครบ 4 ตัวบนหน้าจอเหมือนเดิม
+	_show_all_desktop_buttons()
 
-# ฟังก์ชันช่วยซ่อนปุ่มแบบปลอดภัย
-func _hide_all_desktop_buttons():
-	if has_node("Button_TaskManager_M"): $Button_TaskManager_M.hide()
-	if has_node("Button_Firewall"): $Button_Firewall.hide()
-	if has_node("Button_Router"): $Button_Router.hide()
-	if has_node("Button_PDPA"): $Button_PDPA.hide()
+func _show_all_desktop_buttons():
+	if has_node("Button_TaskManager_M"): $Button_TaskManager_M.show()
+	if has_node("Button_Firewall"): $Button_Firewall.show()
+	if has_node("Button_Router"): $Button_Router.show()
+	if has_node("Button_PDPA"): $Button_PDPA.show()
 
-# ฟังก์ชันช่วยเปิดปุ่มแบบปลอดภัย (เช็กก่อนเปิด เกมจะได้ไม่เด้ง)
-func _show_button(button_name: String):
-	if has_node(button_name):
-		get_node(button_name).show()
-	else:
-		print("🚨 คำเตือน: หา Node ปุ่มที่ชื่อว่า ", button_name, " ไม่เจอในหน้า Desktop")
 
 # =========================================================
-# 🖱️ SECTION: ฟังก์ชันเมื่อคลิกปุ่มไอคอนบนหน้าจอ Desktop 
+# 🖱️ SECTION: ระบบโหลดเกม (ทุกโหมดจะมาโผล่ที่แอป Router เสมอ)
 # =========================================================
 
-# 🖱️ ฟังก์ชันเมื่อคลิกปุ่มแอป Task Manager
-func _on_button_pressed():
-	# 🌟 ชี้ไปที่ Window_TaskManager และโมดูล TaskManager_Mod
-	$Window_TaskManager/TaskManager_Module.position = Vector2(0, 0) 
-	
-	win_task_manager.popup()       
-	win_task_manager.grab_focus()   
-
-# 🖱️ ฟังก์ชันเมื่อคลิกปุ่มแอป Firewall
-func _on_button_firewall_pressed():
-	# 🌟 ชี้ไปที่ Window_Firewall และโมดูล Firewall_Module
-	$Window_Firewall/Firewall_Module.position = Vector2(0, 0) 
-	
-	win_firewall.popup()
-	win_firewall.grab_focus()
-
-# 🖱️ ฟังก์ชันเมื่อคลิกปุ่มแอป Router
+# 🖱️ icon ที่ 3: แอป Router (ศูนย์รวมเกมของทุกโหมด)
 func _on_button_router_pressed():
-	# 🌟 ชี้ไปที่ Window_Router และโมดูล Router_Module (อันนี้เดิมถูกแล้ว)
-	$Window_Router/Router_Module.position = Vector2(0, 0) 
-	
-	win_router.popup()
+	win_router.show()
 	win_router.grab_focus()
-
-# 🖱️ ฟังก์ชันเมื่อคลิกปุ่มแอป VLAN (ปุ่ม PDPA เดิม)
-func _on_button_pdpa_pressed():
-	# 🌟 ชี้ไปที่ Window_VLAN และโมดูล PDPA_Module (ที่รอเปลี่ยนร่างเป็น VLAN)
-	$Window_VLAN/PDPA_Module.position = Vector2(0, 0) 
 	
-	win_vlan.popup()
+	# ล้างหน้าต่างให้ว่างก่อนสุ่มร่างใหม่
+	_clear_window_content(win_router)
+	
+	# 🎯 เช็กเงื่อนไขโหมดจากหน้าแรก แล้วเปลี่ยนเกมในหน้าต่าง Router ตามโหมดนั้น ๆ ทันที!
+	if Global.is_mix_mode:
+		print("🎮 โหมดผสม: โหลดด่าน Router เป็นหลักชั่วคราว")
+		_load_game_into_window(win_router, ROUTER_TRAINING_SCENE)
+	else:
+		match Global.selected_topic:
+			"router":
+				print("🎯 เลือกวิชา Router -> โหลดเกม Router เข้า icon 3")
+				_load_game_into_window(win_router, ROUTER_TRAINING_SCENE)
+			"network":
+				print("🎯 เลือกวิชา Network -> โหลดเกม Firewall เข้า icon 3")
+				_load_game_into_window(win_router, FIREWALL_TRAINING_SCENE)
+			"vlan":
+				print("🎯 เลือกวิชา VLAN -> โหลดเกม VLAN เข้า icon 3")
+				_load_game_into_window(win_router, VLAN_TRAINING_SCENE)
+			"task_manager":
+				print("🎯 เลือกวิชา Task Manager -> โหลดเกม Task Manager เข้า icon 3")
+				_load_game_into_window(win_router, TASK_TRAINING_SCENE)
+			
+
+
+
+# 🖱️ icon ที่ 1: แอป Task Manager (กดแล้วขึ้นหน้าต่างเปล่า)
+func _on_button_pressed():
+	win_task_manager.show()
+	win_task_manager.grab_focus()
+	_clear_window_content(win_task_manager) # ล้างเป็นหน้าต่างว่าง
+
+# 🖱️ icon ที่ 2: แอป Firewall (กดแล้วขึ้นหน้าต่างเปล่า)
+func _on_button_firewall_pressed():
+	win_firewall.show()
+	win_firewall.grab_focus()
+	_clear_window_content(win_firewall) # ล้างเป็นหน้าต่างว่าง
+
+# 🖱️ icon ที่ 4: แอป VLAN / PDPA (กดแล้วขึ้นหน้าต่างเปล่า)
+func _on_button_pdpa_pressed():
+	win_vlan.show()
 	win_vlan.grab_focus()
+	_clear_window_content(win_vlan) # ล้างเป็นหน้าต่างว่าง
 
-func _on_window_router_close_requested():
-	win_router.hide() # 🟢 ถูกต้อง: ปิดตัวมันเอง
 
-func _on_window_task_manager_close_requested() -> void:
-	win_task_manager.hide() # 🟢 แก้ไข: ให้ปิดหน้าต่าง Task Manager
+# =========================================================
+# 🛠️ ฟังก์ชันการจัดการ Node ย่อย
+# =========================================================
 
-func _on_window_firewall_close_requested() -> void:
-	win_firewall.hide() # 🟢 แก้ไข: ให้ปิดหน้าต่าง Firewall
+# ฟังก์ชันเคลียร์ Node เก่าข้างในหน้าต่าง
+func _clear_window_content(target_window: Window):
+	if not target_window: return
+	for child in target_window.get_children():
+		child.queue_free()
 
-func _on_window_vlan_close_requested() -> void:
-	win_vlan.hide() # 🟢 แก้ไข: ให้ปิดหน้าต่าง VLAN
+# ฟังก์ชันเสกตัวเกมใส่เข้าหน้าต่าง
+func _load_game_into_window(target_window: Window, game_scene: PackedScene):
+	if not target_window or not game_scene: return
+	
+	var new_game = game_scene.instantiate()
+	if new_game is Control:
+		new_game.position = Vector2(0, 0)
+		
+	target_window.add_child(new_game)
+
+
+# =========================================================
+# ❌ SECTION: ปิดหน้าต่าง (ซ่อนลงไปเฉยๆ)
+# =========================================================
+func _on_window_router_close_requested(): win_router.hide() 
+func _on_window_task_manager_close_requested() -> void: win_task_manager.hide() 
+func _on_window_firewall_close_requested() -> void: win_firewall.hide() 
+func _on_window_vlan_close_requested() -> void: win_vlan.hide()
