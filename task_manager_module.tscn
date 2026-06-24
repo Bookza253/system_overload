@@ -2,6 +2,21 @@
 
 [ext_resource type="Script" uid="uid://1c4yy0vf34kc" path="res://task_manager_module.gd" id="1_gk2va"]
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_gk2va"]
+bg_color = Color(1, 0, 0, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_yk0c0"]
+bg_color = Color(0, 0, 1, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_5knhg"]
+bg_color = Color(1, 1, 0, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_5ko51"]
+bg_color = Color(0, 1, 0, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_b13b2"]
+bg_color = Color(1, 0.64705884, 0, 1)
+
 [node name="TaskManager_Module" type="Control" unique_id=130243921]
 layout_mode = 3
 anchors_preset = 15
@@ -14,6 +29,7 @@ offset_bottom = -241.0
 grow_horizontal = 2
 grow_vertical = 2
 pivot_offset = Vector2(3, 10)
+mouse_filter = 2
 script = ExtResource("1_gk2va")
 metadata/_edit_horizontal_guides_ = [540.0]
 metadata/_edit_vertical_guides_ = [962.0]
@@ -25,58 +41,116 @@ offset_top = 153.0
 offset_right = 604.0
 offset_bottom = 454.0
 pivot_offset = Vector2(40, 38)
+mouse_filter = 2
 
-[node name="Label" type="Label" parent="Panel" unique_id=1543407574]
+[node name="Label_Terminal" type="Label" parent="Panel" unique_id=1623924207]
 layout_mode = 0
-offset_left = 2.0
-offset_top = 308.0
-offset_right = 461.0
-offset_bottom = 357.0
-text = "URGENT: พบไวรัสแฝงตัวในระบบ 5 ตัว กำจัดด่วน!
-WARNING: ห้ามปิดการทำงานของไฟล์ระบบ (System32) เด็ดขาด!"
+offset_right = 408.0
+offset_bottom = 304.0
+autowrap_mode = 2
 
-[node name="ProgressBar" type="ProgressBar" parent="Panel" unique_id=1316593849]
+[node name="Button_Ping" type="Button" parent="Panel" unique_id=1294592237]
 layout_mode = 0
-offset_left = 1.0
+offset_left = 128.0
+offset_top = 223.0
+offset_right = 274.0
+offset_bottom = 279.0
+text = "REPAIR NETWORK"
+
+[node name="Button_OK" type="Button" parent="Panel" unique_id=382498267]
+visible = false
+layout_mode = 0
+offset_left = 342.0
+offset_top = 244.0
+offset_right = 402.0
+offset_bottom = 276.0
+text = "OK"
+
+[node name="WireGame" type="Control" parent="Panel" unique_id=540627248]
+visible = false
+anchors_preset = 0
 offset_top = 1.0
-offset_right = 406.0
-offset_bottom = 28.0
-value = 50.0
+offset_right = 409.0
+offset_bottom = 301.0
+mouse_filter = 2
 
-[node name="VBoxContainer" type="VBoxContainer" parent="Panel" unique_id=168739785]
+[node name="Left_Red" type="Button" parent="Panel/WireGame" unique_id=523811505]
 layout_mode = 0
-offset_left = 1.0
-offset_top = 49.0
-offset_right = 405.0
-offset_bottom = 290.0
+offset_left = 3.0
+offset_right = 13.0
+offset_bottom = 10.0
+theme_override_styles/normal = SubResource("StyleBoxFlat_gk2va")
 
-[node name="Button1" type="Button" parent="Panel/VBoxContainer" unique_id=676372535]
-layout_mode = 2
-text = "homework_destroyer.bat"
+[node name="Left_Blue" type="Button" parent="Panel/WireGame" unique_id=625677460]
+layout_mode = 0
+offset_left = 3.0
+offset_top = 80.0
+offset_right = 13.0
+offset_bottom = 90.0
+theme_override_styles/normal = SubResource("StyleBoxFlat_yk0c0")
 
-[node name="Button5" type="Button" parent="Panel/VBoxContainer" unique_id=1069443288]
-layout_mode = 2
-text = "win32.trojan.gen.exe"
+[node name="Left_Yellow" type="Button" parent="Panel/WireGame" unique_id=999829963]
+layout_mode = 0
+offset_left = 3.0
+offset_top = 143.0
+offset_right = 13.0
+offset_bottom = 153.0
+theme_override_styles/normal = SubResource("StyleBoxFlat_5knhg")
 
-[node name="Button6" type="Button" parent="Panel/VBoxContainer" unique_id=709264646]
-layout_mode = 2
-text = "download_more_ram.sys"
+[node name="Left_Green" type="Button" parent="Panel/WireGame" unique_id=410514493]
+layout_mode = 0
+offset_left = 3.0
+offset_top = 220.0
+offset_right = 13.0
+offset_bottom = 230.0
+theme_override_styles/normal = SubResource("StyleBoxFlat_5ko51")
 
-[node name="Button7" type="Button" parent="Panel/VBoxContainer" unique_id=1558459261]
-layout_mode = 2
-text = "rootkit_installer.dll"
+[node name="Left_Orange" type="Button" parent="Panel/WireGame" unique_id=99032356]
+layout_mode = 0
+offset_left = 3.0
+offset_top = 290.0
+offset_right = 13.0
+offset_bottom = 300.0
+theme_override_styles/normal = SubResource("StyleBoxFlat_b13b2")
 
-[node name="Button2" type="Button" parent="Panel/VBoxContainer" unique_id=176317952]
-layout_mode = 2
-text = "free_robux_generator.exe"
+[node name="Right_Red" type="Button" parent="Panel/WireGame" unique_id=168205546]
+layout_mode = 0
+offset_left = 398.0
+offset_right = 408.0
+offset_bottom = 10.0
+theme_override_styles/normal = SubResource("StyleBoxFlat_gk2va")
 
-[node name="Button3" type="Button" parent="Panel/VBoxContainer" unique_id=209345098]
-layout_mode = 2
-text = "System32.dll"
+[node name="Right_Blue" type="Button" parent="Panel/WireGame" unique_id=15978067]
+layout_mode = 0
+offset_left = 398.0
+offset_top = 80.0
+offset_right = 408.0
+offset_bottom = 90.0
+theme_override_styles/normal = SubResource("StyleBoxFlat_yk0c0")
 
-[node name="Button4" type="Button" parent="Panel/VBoxContainer" unique_id=771170331]
-layout_mode = 2
-text = "Windows_Defender.exe"
+[node name="Right_Yellow" type="Button" parent="Panel/WireGame" unique_id=1292135320]
+layout_mode = 0
+offset_left = 398.0
+offset_top = 143.0
+offset_right = 408.0
+offset_bottom = 153.0
+theme_override_styles/normal = SubResource("StyleBoxFlat_5knhg")
+
+[node name="Right_Green" type="Button" parent="Panel/WireGame" unique_id=1222087055]
+layout_mode = 0
+offset_left = 398.0
+offset_top = 220.0
+offset_right = 408.0
+offset_bottom = 230.0
+theme_override_styles/normal = SubResource("StyleBoxFlat_5ko51")
+
+[node name="Right_Orange" type="Button" parent="Panel/WireGame" unique_id=1654024572]
+layout_mode = 0
+offset_left = 398.0
+offset_top = 290.0
+offset_right = 408.0
+offset_bottom = 300.0
+theme_override_styles/normal = SubResource("StyleBoxFlat_b13b2")
 
 [node name="ColorRect" type="ColorRect" parent="." unique_id=272214734]
 visible = false
@@ -102,11 +176,6 @@ offset_right = 693.0
 offset_bottom = 565.0
 text = "[ TRY AGAIN ]"
 
-[connection signal="pressed" from="Panel/VBoxContainer/Button1" to="." method="_on_button_1_pressed"]
-[connection signal="pressed" from="Panel/VBoxContainer/Button5" to="." method="_on_button_5_pressed"]
-[connection signal="pressed" from="Panel/VBoxContainer/Button6" to="." method="_on_button_6_pressed"]
-[connection signal="pressed" from="Panel/VBoxContainer/Button7" to="." method="_on_button_7_pressed"]
-[connection signal="pressed" from="Panel/VBoxContainer/Button2" to="." method="_on_button_2_pressed"]
-[connection signal="pressed" from="Panel/VBoxContainer/Button3" to="." method="_on_button_3_pressed"]
-[connection signal="pressed" from="Panel/VBoxContainer/Button4" to="." method="_on_button_4_pressed"]
+[connection signal="pressed" from="Panel/Button_Ping" to="." method="_on_button_ping_pressed"]
+[connection signal="pressed" from="Panel/Button_OK" to="." method="_on_button_ok_pressed"]
 [connection signal="pressed" from="ColorRect/RestartButton" to="." method="_on_restart_button_pressed"]
