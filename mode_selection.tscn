@@ -31,19 +31,19 @@ layout_mode = 2
 
 [node name="NetworkButton" type="Button" parent="VBoxContainer/TrainingSubMenu" unique_id=872585088]
 layout_mode = 2
-text = "Cyber Security"
+text = "Firewall"
 
 [node name="SystemButton" type="Button" parent="VBoxContainer/TrainingSubMenu" unique_id=459025182]
 layout_mode = 2
-text = "Operating System"
+text = "Ping Test & Cable Check"
 
 [node name="Button_Router_Topic" type="Button" parent="VBoxContainer/TrainingSubMenu" unique_id=287480755]
 layout_mode = 2
-text = "Computer Network"
+text = "Router Routing"
 
 [node name="Button_PDPA_Topic" type="Button" parent="VBoxContainer/TrainingSubMenu" unique_id=1410389049]
 layout_mode = 2
-text = "Computer Law & PDPA"
+text = "DHCP IP Assign"
 
 [node name="MixModeButton" type="Button" parent="VBoxContainer" unique_id=107611570]
 layout_mode = 2
