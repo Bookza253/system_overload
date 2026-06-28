@@ -1,8 +1,7 @@
 extends Control
 
 @onready var log_container = $Panel/VBoxContainer 
-@onready var blue_screen = $ColorRect  
-@onready var error_label = $ColorRect/ErrorText 
+# 🗑️ ลบ @onready var blue_screen และ error_label อันเก่าออกไปแล้ว
 @onready var rule_label = $Panel/Label2 
 
 var is_game_over = false
@@ -13,19 +12,15 @@ var max_lives = 3
 var current_lives = 3
 
 func _ready():
-	blue_screen.hide()
 	visibility_changed.connect(_on_window_visibility_changed)
-	
-	# 🔌 [จุดที่เพิ่มเข้ามา] เชื่อมสายไฟให้ปุ่ม RestartButton ที่อยู่ในจอฟ้าทำงาน
-	$ColorRect/RestartButton.pressed.connect(_on_restart_button_pressed)
+	# 🗑️ ลบคำสั่งเชื่อมต่อปุ่ม Restart ของจอฟ้าอันเก่าออกไปแล้ว
 
 func setup_game():
 	is_game_over = false
 	hackers_blocked = 0
 	current_lives = 3
-	blue_screen.hide()
 	
-	# 😈 [เพิ่มบรรทัดนี้] รีเซ็ตตัวคูณ CPU กลับมาเป็น 1 เท่าทุกครั้งที่เริ่มเกมใหม่
+	# 😈 รีเซ็ตตัวคูณ CPU กลับมาเป็น 1 เท่าทุกครั้งที่เริ่มเกมใหม่
 	Global.mix_cpu_multiplier = 1.0 
 	
 	for child in log_container.get_children():
@@ -52,7 +47,7 @@ func _on_timer_timeout():
 		return 
 		
 	var new_log = Button.new() 
-	var traffic_type = randi() % 4  # สุ่มรูปแบบข้อมูลจาก 4 หน้าต่างความเป็นไปได้
+	var traffic_type = randi() % 4 # สุ่มรูปแบบข้อมูลจาก 4 หน้าต่างความเป็นไปได้
 	
 	var log_ip = "192.168.1." + str(randi() % 254 + 1)
 	var log_port = danger_port
@@ -96,7 +91,7 @@ func _on_timer_timeout():
 		if oldest_log.get_meta("is_hacker") == true:
 			deduct_life("SYSTEM BREACHED: แฮกเกอร์เล็ดลอดเข้าสู่ระบบพอร์ต " + str(danger_port) + "!")
 			
-			# 😈 [เพิ่มโค้ดส่วนนี้] ถ้าอยู่ในโหมดผสม แล้วปล่อยแฮกเกอร์หลุด 
+			# 😈 ถ้าอยู่ในโหมดผสม แล้วปล่อยแฮกเกอร์หลุด 
 			# สั่งเพิ่มความเร็วหลอด CPU ฝั่ง Task Manager ขึ้นอีกตัวละ +0.5 เท่าทันที!
 			if Global.is_mix_mode:
 				Global.mix_cpu_multiplier += 0.5
@@ -115,6 +110,10 @@ func _on_log_clicked(clicked_log):
 		
 		if hackers_blocked >= win_condition:
 			$Timer.stop() 
+			
+			# 🟢 ส่งแต้มไปบอกตัวแปร Global ว่าด่านนี้เคลียร์แล้วนะ
+			Global.completed_modules_count += 1
+			
 			self.hide()   
 	else:
 		clicked_log.queue_free()
@@ -125,14 +124,17 @@ func deduct_life(reason_message):
 	update_rule_ui()
 	
 	if current_lives <= 0:
-		trigger_game_over("SYSTEM OVERLOAD: \n" + reason_message + "\nเครือข่ายโดนทำลายโดยสมบูรณ์!")
+		trigger_game_over(reason_message)
 
-func trigger_game_over(reason_text):
+# 🌟 ฟังก์ชันจัดการการแพ้แบบดีดเข้าสู่หน้าจอฟ้าหลักของระบบ
+func trigger_game_over(reason_message):
 	is_game_over = true
 	$Timer.stop() 
-	error_label.text = reason_text 
-	blue_screen.show()
+	
+	# 1. ส่งรายละเอียดและรหัสข้อผิดพลาดของ Firewall ไปฝากไว้ที่ตัวแปรกลาง
+	Global.game_over_reason = "❌ FIREWALL SECURITY COLLAPSE\n" + reason_message + "\nเครือข่ายโดนทำลายโดยสมบูรณ์!"
+	
+	# 2. กระโดดข้ามหน้าต่างสี่เหลี่ยม เปลี่ยนฉากใหญ่เต็มจอไปที่ฉากจอฟ้าตัวใหม่
+	get_tree().change_scene_to_file("res://blue_screen_scene.tscn")
 
-# 🔄 ย้อนคืนความถูกต้องให้ปุ่มเกิดใหม่วาร์ปกลับไปหน้าแรกสุดตามที่คุณต้องการ
-func _on_restart_button_pressed():
-	get_tree().change_scene_to_file("res://mode_selection.tscn")
+# 🗑️ ลบฟังก์ชัน _on_restart_button_pressed แบบเก่าออกไปแล้ว

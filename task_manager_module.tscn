@@ -28,12 +28,12 @@ pivot_offset = Vector2(40, 38)
 
 [node name="Label" type="Label" parent="Panel" unique_id=1543407574]
 layout_mode = 0
-offset_left = 2.0
-offset_top = 308.0
-offset_right = 461.0
-offset_bottom = 357.0
-text = "URGENT: พบไวรัสแฝงตัวในระบบ 5 ตัว กำจัดด่วน!
-WARNING: ห้ามปิดการทำงานของไฟล์ระบบ (System32) เด็ดขาด!"
+offset_left = -118.0
+offset_top = 304.0
+offset_right = 523.0
+offset_bottom = 353.0
+text = "🚨 [SECURITY LOG]: MALICIOUS NETWORK INTERRUPTS INJECTED ON PORT 22 / 443
+⚠️ [CRITICAL]: CORE INFRASTRUCTURE SERVICES MUST REMAIN ACTIVE!"
 
 [node name="ProgressBar" type="ProgressBar" parent="Panel" unique_id=1316593849]
 layout_mode = 0
@@ -42,6 +42,25 @@ offset_top = 1.0
 offset_right = 406.0
 offset_bottom = 28.0
 value = 50.0
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Panel" unique_id=880862437]
+layout_mode = 0
+offset_top = -37.0
+offset_right = 408.0
+offset_bottom = 1.0
+theme_override_constants/separation = 82
+
+[node name="Label" type="Label" parent="Panel/HBoxContainer" unique_id=1220555215]
+layout_mode = 2
+text = "[PID]"
+
+[node name="Label2" type="Label" parent="Panel/HBoxContainer" unique_id=223808609]
+layout_mode = 2
+text = "[PROCESS NAME]"
+
+[node name="Label3" type="Label" parent="Panel/HBoxContainer" unique_id=1413410551]
+layout_mode = 2
+text = "[ACTION]"
 
 [node name="VBoxContainer" type="VBoxContainer" parent="Panel" unique_id=168739785]
 layout_mode = 0
@@ -52,55 +71,31 @@ offset_bottom = 290.0
 
 [node name="Button1" type="Button" parent="Panel/VBoxContainer" unique_id=676372535]
 layout_mode = 2
-text = "homework_destroyer.bat"
+text = "4091 | backdoor_listener.sh"
 
 [node name="Button5" type="Button" parent="Panel/VBoxContainer" unique_id=1069443288]
 layout_mode = 2
-text = "win32.trojan.gen.exe"
+text = "8843 | ransomware_spreading.exe"
 
 [node name="Button6" type="Button" parent="Panel/VBoxContainer" unique_id=709264646]
 layout_mode = 2
-text = "download_more_ram.sys"
+text = "1024 | cryptominer_network.sh"
 
 [node name="Button7" type="Button" parent="Panel/VBoxContainer" unique_id=1558459261]
 layout_mode = 2
-text = "rootkit_installer.dll"
+text = "3195 | sniffing_promiscuous.sh"
 
 [node name="Button2" type="Button" parent="Panel/VBoxContainer" unique_id=176317952]
 layout_mode = 2
-text = "free_robux_generator.exe"
+text = "5122 | malicious_ping_flood.py"
 
 [node name="Button3" type="Button" parent="Panel/VBoxContainer" unique_id=209345098]
 layout_mode = 2
-text = "System32.dll"
+text = "0001 | core_router_gateway.sys"
 
 [node name="Button4" type="Button" parent="Panel/VBoxContainer" unique_id=771170331]
 layout_mode = 2
-text = "Windows_Defender.exe"
-
-[node name="ColorRect" type="ColorRect" parent="." unique_id=272214734]
-visible = false
-layout_mode = 0
-offset_right = 1151.0
-offset_bottom = 647.0
-color = Color(0, 0.23529412, 1, 1)
-
-[node name="ErrorText" type="Label" parent="ColorRect" unique_id=172481047]
-layout_mode = 0
-offset_left = 28.0
-offset_top = 29.0
-offset_right = 210.0
-offset_bottom = 84.0
-theme_override_font_sizes/font_size = 40
-text = "ErrorText"
-
-[node name="RestartButton" type="Button" parent="ColorRect" unique_id=103296359]
-layout_mode = 0
-offset_left = 494.0
-offset_top = 489.0
-offset_right = 693.0
-offset_bottom = 565.0
-text = "[ TRY AGAIN ]"
+text = "0002 | dhcp_server_daemon.pid"
 
 [connection signal="pressed" from="Panel/VBoxContainer/Button1" to="." method="_on_button_1_pressed"]
 [connection signal="pressed" from="Panel/VBoxContainer/Button5" to="." method="_on_button_5_pressed"]
@@ -109,4 +104,3 @@ text = "[ TRY AGAIN ]"
 [connection signal="pressed" from="Panel/VBoxContainer/Button2" to="." method="_on_button_2_pressed"]
 [connection signal="pressed" from="Panel/VBoxContainer/Button3" to="." method="_on_button_3_pressed"]
 [connection signal="pressed" from="Panel/VBoxContainer/Button4" to="." method="_on_button_4_pressed"]
-[connection signal="pressed" from="ColorRect/RestartButton" to="." method="_on_restart_button_pressed"]

@@ -7,6 +7,10 @@ layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+offset_left = 565.0
+offset_top = 241.0
+offset_right = -555.0
+offset_bottom = -239.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_12joa")
@@ -15,10 +19,10 @@ metadata/_edit_vertical_guides_ = [961.0]
 
 [node name="Panel" type="Panel" parent="." unique_id=1665129569]
 layout_mode = 0
-offset_left = 559.0
-offset_top = 240.0
-offset_right = 1359.0
-offset_bottom = 840.0
+offset_left = -6.0
+offset_top = -1.0
+offset_right = 794.0
+offset_bottom = 599.0
 
 [node name="Label2" type="Label" parent="Panel" unique_id=1730684003]
 layout_mode = 0
@@ -38,29 +42,4 @@ offset_bottom = 340.0
 [node name="Timer" type="Timer" parent="." unique_id=379921008]
 wait_time = 0.8
 
-[node name="ColorRect" type="ColorRect" parent="." unique_id=82978313]
-visible = false
-layout_mode = 0
-offset_right = 1151.0
-offset_bottom = 647.0
-color = Color(0, 0.23529412, 1, 1)
-
-[node name="ErrorText" type="Label" parent="ColorRect" unique_id=1110510110]
-layout_mode = 0
-offset_left = 28.0
-offset_top = 29.0
-offset_right = 210.0
-offset_bottom = 84.0
-theme_override_font_sizes/font_size = 40
-text = "ErrorText"
-
-[node name="RestartButton" type="Button" parent="ColorRect" unique_id=698335514]
-layout_mode = 0
-offset_left = 461.0
-offset_top = 486.0
-offset_right = 660.0
-offset_bottom = 562.0
-text = "[ TRY AGAIN ]"
-
 [connection signal="timeout" from="Timer" to="." method="_on_timer_timeout"]
-[connection signal="pressed" from="ColorRect/RestartButton" to="." method="_on_button_pressed"]

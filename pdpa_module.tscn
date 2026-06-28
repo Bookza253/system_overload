@@ -7,10 +7,10 @@ layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = 554.0
-offset_top = 315.0
-offset_right = -566.0
-offset_bottom = -165.0
+offset_left = 562.0
+offset_top = 240.0
+offset_right = -558.0
+offset_bottom = -240.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_edew7")
@@ -19,10 +19,10 @@ metadata/_edit_vertical_guides_ = [959.0]
 
 [node name="Panel" type="Panel" parent="." unique_id=1210043680]
 layout_mode = 0
-offset_left = 8.0
-offset_top = -72.0
-offset_right = 808.0
-offset_bottom = 528.0
+offset_left = -7.0
+offset_top = 1.0
+offset_right = 793.0
+offset_bottom = 601.0
 
 [node name="Label_Title" type="Label" parent="Panel" unique_id=270431833]
 layout_mode = 0
@@ -84,27 +84,5 @@ text = "[ PRIVACY POLICY MANUAL ]
 • กฎหมาย PDPA -> ลูกค้ามีสิทธิ์สั่ง \"ลบข้อมูล\" (Delete) ได้เสมอ"
 autowrap_mode = 1
 
-[node name="blue_screen" type="ColorRect" parent="." unique_id=1121840773]
-visible = false
-layout_mode = 0
-offset_right = 1151.0
-offset_bottom = 646.0
-color = Color(0, 0.49411765, 1, 1)
-
-[node name="ErrorText" type="Label" parent="blue_screen" unique_id=1773083708]
-layout_mode = 0
-offset_right = 411.0
-offset_bottom = 70.0
-text = "ข้อความแจ้งสาเหตุที่แพ้"
-
-[node name="RestartButton" type="Button" parent="blue_screen" unique_id=1008849301]
-layout_mode = 0
-offset_left = 474.0
-offset_top = 466.0
-offset_right = 667.0
-offset_bottom = 520.0
-text = "ปุ่มกดเพื่อเริ่มเกมใหม่"
-
 [connection signal="pressed" from="Panel/Button_Allow" to="." method="_on_button_allow_pressed"]
 [connection signal="pressed" from="Panel/Button_Deny" to="." method="_on_button_deny_pressed"]
-[connection signal="pressed" from="blue_screen/RestartButton" to="." method="_on_restart_button_pressed"]

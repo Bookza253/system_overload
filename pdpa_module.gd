@@ -2,14 +2,13 @@ extends Control
 
 @onready var request_label = $Panel/Label_Request
 @onready var timer_label = $Panel/Label_Timer
-@onready var blue_screen = $blue_screen
-@onready var error_label = $blue_screen/ErrorText
+# 🗑️ ลบ @onready var blue_screen และ error_label อันเก่าออกไปแล้ว
 
 var current_request_answer: bool = false # true = ควรอนุญาต (Allow), false = ควรปฏิเสธ (Deny)
 var time_left: float = 12.0
 var is_game_over: bool = false
 
-# 📜 คลังโจทย์สุ่มคำร้องจรรยาบรรณ & กฎหมาย PDPA
+# 📜 คลังโจทย์สุ่มคำร้องจรรยาบรรณ & กฎหมาย PDPA (Access Control เครือข่าย)
 var challenges = [
 	{
 		"text": "นักศึกษาฝึกงาน (Intern) ส่งคำร้อง:\n ขอเข้าถึง 'ไฟล์โครงสร้างเงินเดือนผู้บริหาร' เพื่อศึกษาระบบงานคลัง",
@@ -53,7 +52,6 @@ func _process(delta):
 # 🎲 ฟังก์ชันสุ่มโจทย์ใหม่
 func setup_new_request():
 	is_game_over = false
-	blue_screen.hide()
 	time_left = 12.0 # ให้เวลาข้อละ 12 วินาที
 	
 	var random_idx = randi() % challenges.size()
@@ -64,27 +62,34 @@ func setup_new_request():
 
 # 🟩 ปุ่ม ALLOW (อนุญาต)
 func _on_button_allow_pressed():
-	if is_game_over: return
+	if is_game_over: return # 🌟 บรรทัดนี้จะล็อกปุ่มทันทีถ้าคลิกไปแล้วครั้งหนึ่ง เพื่อไม่ให้เมาส์เบิ้ลคลิกมาเจอตัวสแปม Error
+	
 	if current_request_answer == true:
 		print("เลือกถูกทาง! อนุมัติถูกต้องตามกฎหมาย")
 		status_complete()
 	else:
-		trigger_game_over(challenges[challenges.find_custom(func(c): return c["text"] == request_label.text)]["reason"])
+		var current_challenge = challenges.filter(func(c): return c["text"] == request_label.text)[0]
+		trigger_game_over(current_challenge["reason"])
 
 # 🟥 ปุ่ม DENY (ปฏิเสธ)
 func _on_button_deny_pressed():
-	if is_game_over: return
+	if is_game_over: return # 🌟 ใส่ดักไว้ตรงนี้ด้วยเช่นกันครับ
+	
 	if current_request_answer == false:
 		print("เลือกถูกทาง! ปฏิเสธสิทธิ์ปกป้องข้อมูลสำเร็จ")
 		status_complete()
 	else:
-		trigger_game_over(challenges[challenges.find_custom(func(c): return c["text"] == request_label.text)]["reason"])
+		var current_challenge = challenges.filter(func(c): return c["text"] == request_label.text)[0]
+		trigger_game_over(current_challenge["reason"])
 
 func status_complete():
 	is_game_over = true # สั่งหยุดเวลานับถอยหลังชั่วคราว
 	
+	# 🟢 สะสมแต้มผ่านด่านส่งไปบอกสมองกลาง Global
+	Global.completed_modules_count += 1
+	
 	# เปลี่ยนข้อความในกล่องโจทย์ให้กลายเป็นตัวหนังสือสีเขียวแจ้งสถานะสำเร็จ
-	request_label.text = "🟢 [ COMPLIANCE SUCCESS ]\nการดำเนินงานถูกต้องตามกฎหมาย PDPA และจรรยาบรรณวิชาชีพเรียบร้อย!"
+	request_label.text = "🟢 [ COMPLIANCE SUCCESS ]\nการดำเนินงานถูกต้องตามกฎหมายและจรรยาบรรณวิชาชีพเรียบร้อย!"
 	
 	# สั่งให้ตัวเอนจินรอเวลาหน่วงหน้าจอไว้เป็นเวลา 1.5 วินาที เพื่อให้คนเล่นได้อ่าน
 	await get_tree().create_timer(1.5).timeout
@@ -92,11 +97,14 @@ func status_complete():
 	# พอครบ 1.5 วิแล้ว ค่อยสั่งปิดหน้าต่างแอปนี้ลงไปเพื่อกลับสู่หน้าจอเดสก์ท็อปหลัก
 	self.hide()
 
+# 🌟 ฟังก์ชันจัดการการแพ้แบบดีดเข้าสู่หน้าจอฟ้าหลักของระบบ
 func trigger_game_over(reason_text):
 	is_game_over = true
-	error_label.text = reason_text
-	blue_screen.show()
+	
+	# 1. ส่งรายละเอียดความผิดพลาดไปฝากไว้ที่ตัวแปรกลาง
+	Global.game_over_reason = "❌ PRIVACY & ACCESS CONTROL VIOLATION\n" + reason_text
+	
+	# 2. เปลี่ยนฉากใหญ่เต็มจอไปที่ฉากจอฟ้าตัวใหม่
+	get_tree().change_scene_to_file("res://blue_screen_scene.tscn")
 
-# 🔄 ปุ่ม RESTART บนหน้าจอฟ้า
-func _on_restart_button_pressed():
-	get_tree().change_scene_to_file("res://mode_selection.tscn")
+# 🗑️ ลบฟังก์ชัน _on_restart_button_pressed แบบเก่าออกไปแล้ว
