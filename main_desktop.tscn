@@ -108,6 +108,7 @@ offset_bottom = -20.0
 oversampling_override = 1.0
 initial_position = 2
 size = Vector2i(800, 600)
+visible = false
 transient = true
 
 [node name="Firewall_Module" parent="Window_Firewall" unique_id=483616568 instance=ExtResource("4_f4ip0")]
