@@ -1,128 +1,196 @@
 extends Control
 
-@onready var manual_panel = $Panel/ManualPanel  # 📖 ตัวแปรชี้ไปที่แผงคู่มือ
-@onready var status_label = $Panel/Label_Status
-@onready var instruction_label = $Panel/Label_Instruction
-@onready var ip_input = $Panel/LineEdit_IP
-@onready var port_button = $Panel/Button_TogglePort
-# 🗑️ ลบ @onready var blue_screen และ error_label อันเก่าออกไปแล้ว
+# ==============================================================================
+# 🚨 1. ONREADY VARIABLES
+# ==============================================================================
+@onready var log_text_edit = $Panel/TextEdit_Log if has_node("Panel/TextEdit_Log") else null 
+@onready var command_input = $Panel/LineEdit_IP if has_node("Panel/LineEdit_IP") else null 
 
+var target_vlan = 0
+var target_port = ""
 var target_ip = ""
-var target_port = 0
-var is_port_open = false
+
+var current_vlan_configured = false
+var ping_success = false
 var is_game_over = false
 
-# 🌟 เพิ่มตัวแปรสำหรับเก็บค่าสถานะจำลองในการพิมพ์คำสั่ง
-var current_configured_ip = ""
+# 🔑 ระดับสถานะโหมด CLI (0: User Mode, 1: Privileged Mode, 2: Config Mode)
+var current_cli_mode = 0 
 
+# ==============================================================================
+# ⚙️ 2. MAIN SIMULATOR SYSTEM
+# ==============================================================================
 func _ready():
-	# 🔒 🌟 ปลุกให้ระวังตัวแปรลูปเกม (ถ้ามีการเช็ก process ให้เริ่มทำงานที่นี่ได้)
-	port_button.text = "PORT: CLOSED"
-	setup_router_challenge()
+	if command_input: 
+		command_input.text = ""
+	if log_text_edit:
+		log_text_edit.text = ""
+		
+	setup_switch_challenge()
 
-# 🎲 ฟังก์ชันสุ่มโจทย์ระบบล่มตามแผนกต่างๆ
-func setup_router_challenge():
+func setup_switch_challenge():
 	is_game_over = false
-	ip_input.text = ""
-	is_port_open = false
-	current_configured_ip = "" # รีเซ็ตค่า IP ที่คอนฟิกไว้
-	port_button.text = "PORT: CLOSED"
+	current_vlan_configured = false
+	ping_success = false
+	current_cli_mode = 0 
 	
-	manual_panel.hide() # 🌟 สั่งให้คู่มือปิดลงก่อนทุกครั้งที่ขึ้นโจทย์ใหม่
+	if command_input: 
+		command_input.text = ""
 	
-	var departments = ["Accounting", "HR", "Marketing", "R&D"]
-	var selected_dept = departments[randi() % departments.size()]
+	var scenarios = ["Finance", "Engineering", "Guest_WiFi"]
+	var selected = scenarios[randi() % scenarios.size()]
 	
-	# สุ่มชุดข้อมูล IP และพอร์ตที่ถูกต้อง
-	match selected_dept:
-		"Accounting":
-			target_ip = "192.168.1.50"
-			target_port = 8080
-		"HR":
-			target_ip = "192.168.2.10"
-			target_port = 22
-		"Marketing":
-			target_ip = "192.168.3.99"
-			target_port = 443
-		"R&D":
-			target_ip = "10.0.0.4"
-			target_port = 3128
+	match selected:
+		"Finance":
+			target_vlan = 10
+			target_port = "fa0/1"
+			target_ip = "10.10.10.254"
+		"Engineering":
+			target_vlan = 20
+			target_port = "fa0/2"
+			target_ip = "10.20.20.254"
+		"Guest_WiFi":
+			target_vlan = 99
+			target_port = "fa0/5"
+			target_ip = "172.16.99.1"
 			
-	status_label.text = "🚨 CRITICAL: " + selected_dept + " Department Network DISCONNECTED!"
-	# 🌟 ปรับปรุงคำอธิบายวิธีใช้คำสั่งบนหน้าจอให้เสมือนจริงขึ้น
-	instruction_label.text = "พิมพ์คำสั่ง: 'route add [IP]' -> 'open port [Port]' -> พิมพ์ 'apply' หรือกดปุ่ม APPLY"
+	if log_text_edit:
+		log_text_edit.text = "--- SWITCH OS V2.0 TERMINAL ---\n"
+		log_text_edit.text += "Device Boot Completed. Ready for configuration...\n"
+		log_text_edit.text += "ALERT: Port " + target_port + " link-state changed to DOWN (VLAN Mismatch).\n"
+		log_text_edit.text += "Format: 'switchport access vlan [เลข]' -> 'ex' -> 'ping [IP]'\n"
+		log_text_edit.text += "Hint: พิมพ์คำสั่ง 'enable' เพื่อเริ่มต้น\n\n"
+		_print_prompt()
 
-# ❌ 🔘 เอาลอจิกคลิกปุ่มสลับพอร์ตแบบเก่าออก เพื่อบังคับให้พิมพ์แทน
-func _on_button_toggle_port_pressed():
-	pass
+	# 🟢 จุดที่ 1: เปิดด่านมาปุ๊บ ให้เคอร์เซอร์กระพริบรอที่ช่องพิมพ์ทันที
+	if command_input:
+		command_input.call_deferred("grab_focus")
 
-# 🚀 กดปุ่ม Apply เพื่อตรวจสอบความถูกต้องและการรันชุดคำสั่งทั้งหมด
-func _on_button_apply_pressed():
-	# 🌟 เพิ่มเงื่อนไขเช็ก: ถ้าแพ้แล้ว หรือหน้าต่างถูกซ่อนไปแล้ว ให้ดีดคำสั่งทิ้งทันที ป้องกัน Input ซ้ำซ้อน
+# ฟังก์ชันพิมพ์สถานะโหมดเริ่มต้นของบรรทัด
+func _print_prompt():
+	if not log_text_edit: return
+	match current_cli_mode:
+		0: log_text_edit.text += "Switch> "
+		1: log_text_edit.text += "Switch# "
+		2: log_text_edit.text += "Switch(config)# "
+	_scroll_to_bottom()
+
+# 🚀 ฟังก์ชันเชื่อมสัญญาณกด Enter จากช่องพิมพ์ด้านล่าง (LineEdit_IP)
+func _on_line_edit_ip_text_submitted(new_text: String) -> void:
 	if is_game_over or not is_visible_in_tree(): return
 	
-	var raw_input = ip_input.text.strip_edges()
+	var raw_command = new_text.strip_edges()
 	
-	# 🌟 [ระบบ Simulator แกะคำสั่ง] 
-	# 1. จัดการคำสั่งเพิ่มเส้นทาง IP: route add
-	if raw_input.begins_with("route add "):
-		var user_ip = raw_input.replace("route add ", "").strip_edges()
-		current_configured_ip = user_ip
-		status_label.text = "⚙️ SIMULATOR: Static route configured -> " + user_ip
-		ip_input.text = "" # ล้างช่องเพื่อให้พิมพ์คำสั่งต่อไปง่ายขึ้น
+	if command_input: 
+		command_input.text = "" 
+	
+	if raw_command == "": 
+		_print_to_terminal("")
+		_print_prompt()
+		# 🟢 จุดที่ 2: ถ้ากด Enter เปล่า ๆ ให้ล็อกโฟกัสไว้ในเฟรมถัดไปทันที
+		if command_input:
+			command_input.call_deferred("grab_focus")
 		return
-		
-	# 2. จัดการคำสั่งเปิดเกตเวย์พอร์ต: open port
-	elif raw_input.begins_with("open port "):
-		var user_port_str = raw_input.replace("open port ", "").strip_edges()
-		if user_port_str == str(target_port):
-			is_port_open = true
-			port_button.text = "PORT: OPEN (Listening)"
-			status_label.text = "⚙️ SIMULATOR: Target Gateway Port Opened Successfully."
+	
+	if log_text_edit:
+		log_text_edit.text += raw_command + "\n"
+	
+	await get_tree().create_timer(0.1).timeout
+	
+	_process_cli_command(raw_command)
+
+	# 🟢 จุดที่ 3: บังคับเรียกโฟกัสกลับมาแบบดีเฟอร์หลังจากประมวลผลคำสั่งเสร็จสิ้น พิมพ์ต่อได้ยาว ๆ
+	if command_input:
+		command_input.call_deferred("grab_focus")
+
+# ระบบตัวจำลองการตรวจคำสั่ง
+func _process_cli_command(raw_command: String):
+	# 🟢 โหมดที่ 0: User Mode
+	if current_cli_mode == 0:
+		if raw_command == "enable":
+			current_cli_mode = 1
+		elif raw_command.begins_with("ping ") or raw_command.begins_with("switchport ") or raw_command == "exit" or raw_command == "ex":
+			_print_to_terminal("% Command rejected: ต้องพิมพ์ 'enable' ก่อนเข้าจัดการระบบ")
 		else:
-			# ถ้าตั้งพอร์ตผิดจากคู่มือ ถือว่าบุกรุกและระบบตัดทันที
-			trigger_game_over("SECURITY ERROR:\nเกิดสภาวะบุกรุก พอร์ตหมายเลข " + user_port_str + " ไม่อนุญาตให้เปิดใช้งานบนแผนกนี้!")
-		ip_input.text = ""
-		return
+			_print_to_terminal("% Unknown command. (พิมพ์ 'enable' เพื่อเริ่มต้น)")
+	
+	# 🟢 โหมดที่ 1: Privileged EXEC Mode
+	elif current_cli_mode == 1:
+		if raw_command == "configure terminal" or raw_command == "conf t":
+			current_cli_mode = 2
+			_print_to_terminal("Enter configuration commands, one per line. End with CNTL/Z.")
+		elif raw_command.begins_with("ping "):
+			var ip_arg = raw_command.replace("ping ", "").strip_edges()
+			_print_to_terminal("Pinging " + ip_arg + " with 32 bytes of data:")
+			
+			await get_tree().create_timer(0.3).timeout
+			if current_vlan_configured and ip_arg == target_ip:
+				ping_success = true
+				_print_to_terminal("Reply from " + ip_arg + ": bytes=32 time=4ms TTL=64")
+				_print_to_terminal("📊 Ping statistics: Success Rate 100%")
+				_check_win_condition()
+				if is_game_over: return
+			else:
+				ping_success = false
+				_print_to_terminal("Request timed out.")
+				_print_to_terminal("📊 Ping statistics: Lost = 100% (Destination Host Unreachable)")
+		elif raw_command.begins_with("switchport "):
+			_print_to_terminal("% Command rejected: กรุณาเข้าโหมด Config โดยพิมพ์ 'conf t' ก่อน")
+		elif raw_command == "exit" or raw_command == "ex": # รองรับตัวย่อโหมด 1
+			_print_to_terminal("% Connection closed.")
+		else:
+			_print_to_terminal("% Unknown command. (พิมพ์ 'conf t' หรือ 'ping [IP]')")
 
-	# 3. ตรวจสอบเงื่อนไขหลังสั่งรันระบบแบบของจริง
-	# เช็กว่าผู้เล่นกรอก IP ได้ตรงกับแผนก และเปิดใช้งานพอร์ตตรงล็อกแล้วหรือไม่
-	if current_configured_ip == target_ip and is_port_open:
-		print("✅ เชื่อมต่อเน็ตเวิร์กสำเร็จ!")
-		status_label.text = "🟢 STATUS: NETWORK ONLINE"
-		
-		# สะสมคะแนนตัวนับด่านที่เคลียร์เข้าสคริปต์กลาง
-		Global.completed_modules_count += 1
-		
+	# 🟢 โหมดที่ 2: Global Configuration Mode
+	elif current_cli_mode == 2:
+		if raw_command.begins_with("switchport access vlan "):
+			var vlan_arg = raw_command.replace("switchport access vlan ", "").strip_edges()
+			if vlan_arg == str(target_vlan):
+				current_vlan_configured = true
+				_print_to_terminal("Success: Interface " + target_port + " moved to VLAN " + vlan_arg + ".")
+				_print_to_terminal("ℹ️ [System]: ตั้งค่าเสร็จแล้ว พิมพ์ 'ex' เพื่อถอยกลับไปลอง ping")
+			else:
+				trigger_game_over("VLAN CRASH:\nคุณใส่หมายเลข VLAN ผิดพลาด ทำให้ระบบลูปชนกันเสียหาย!")
+				return
+		elif raw_command == "exit" or raw_command == "ex": # 🟢 เพิ่มให้โหมดนี้รองรับตัวย่อ 'ex' ด้วย
+			current_cli_mode = 1
+			_print_to_terminal("Leaving Configuration Mode.")
+		elif raw_command.begins_with("ping "):
+			_print_to_terminal("% Command rejected: ใช้คำสั่ง ping ในโหมด Config ไม่ได้ กรุณาพิมพ์ 'ex' ก่อน")
+		else:
+			_print_to_terminal("% Invalid syntax. (คำสั่งที่รองรับในโหมดนี้: 'switchport access vlan [เลข]', 'ex')")
+
+	_print_prompt()
+
+# ==============================================================================
+# 🎯 3. SUB SYSTEMS
+# ==============================================================================
+func _print_to_terminal(text: String):
+	if log_text_edit:
+		log_text_edit.text += text + "\n"
+		_scroll_to_bottom()
+
+func _scroll_to_bottom():
+	if log_text_edit:
+		log_text_edit.scroll_vertical = log_text_edit.get_line_count()
+
+func _check_win_condition():
+	if current_vlan_configured and ping_success:
+		_print_to_terminal("\n🟢 SWITCH CONFIGURATION COMPLETE! NETWORK STABLE.")
+		if "completed_modules_count" in Global:
+			Global.completed_modules_count += 1
+			
 		await get_tree().create_timer(1.5).timeout
-		self.hide() # ผ่านด่านแล้ว ปิดหน้าต่างตัวเองลง
-	else:
-		# ❌ ถ้าคีย์คำสั่งผิดพลาด หรือไม่ทำตามลำดับเน็ตเวิร์ก จะโดนบอมบ์จอฟ้าทันที
-		var error_msg = "ROUTER DETONATED:\nการตั้งค่าล้มเหลว! "
-		if current_configured_ip != target_ip:
-			error_msg += "ไม่พบเส้นทางเครือข่ายปลายทาง (Network Unreachable) "
-		if not is_port_open:
-			error_msg += "หรือ พอร์ตการสื่อสารยังไม่ได้เปิดสัญญาณ (Gateway Closed)!"
-		trigger_game_over(error_msg)
+		_close_this_popup()
 
-# 🌟 ฟังก์ชันจัดการการแพ้แบบเปลี่ยนฉากไปหน้าจอฟ้าหลัก
 func trigger_game_over(reason_text):
 	is_game_over = true
-	
-	# 1. ฝากสาเหตุความผิดพลาดเข้าตัวแปรกลาง Global
 	Global.game_over_reason = reason_text
-	
-	# 2. สั่งระบบกระโดดข้ามฉากหลักเต็มจอไปที่ฉากจอฟ้าใหม่ทันที!
 	get_tree().change_scene_to_file("res://blue_screen_scene.tscn")
 
-# 🗑️ ลบฟังก์ชัน _on_restart_button_pressed แบบเก่าออกไปแล้ว
-
-# 🖱️ ปุ่มกดเพื่อ เปิด หรือ ปิด หน้าต่างคู่มือสลับกันไปมา
-func _on_button_manual_pressed():
-	if is_game_over: return
-	manual_panel.visible = !manual_panel.visible
-
-# 🖱️ แก้ไขฟังก์ชันตอนกด Enter ในช่องพิมพ์
-func _on_line_edit_ip_text_submitted(_new_text: String) -> void:
-	if is_game_over or not is_visible_in_tree(): return # 🌟 ใส่ดักไว้ตรงนี้ด้วยเช่นกันครับ
-	_on_button_apply_pressed()
+func _close_this_popup():
+	var parent_node = get_parent()
+	if parent_node and (parent_node is Window or parent_node.name.begins_with("Window")):
+		parent_node.hide()
+	else:
+		self.hide()

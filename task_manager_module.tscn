@@ -2,6 +2,16 @@
 
 [ext_resource type="Script" uid="uid://1c4yy0vf34kc" path="res://task_manager_module.gd" id="1_gk2va"]
 
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_gk2va"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_yk0c0"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_5knhg"]
+bg_color = Color(0, 0, 0, 1)
+border_width_top = 1
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_5ko51"]
+
 [node name="TaskManager_Module" type="Control" unique_id=130243921]
 layout_mode = 3
 anchors_preset = 15
@@ -18,89 +28,30 @@ script = ExtResource("1_gk2va")
 metadata/_edit_horizontal_guides_ = [540.0]
 metadata/_edit_vertical_guides_ = [962.0]
 
-[node name="Panel" type="Panel" parent="." unique_id=86829188]
+[node name="Panel" type="Panel" parent="." unique_id=126027253]
+process_mode = 3
 layout_mode = 0
-offset_left = 195.0
-offset_top = 153.0
-offset_right = 604.0
-offset_bottom = 454.0
-pivot_offset = Vector2(40, 38)
+offset_left = 5.0
+offset_top = 4.0
+offset_right = 805.0
+offset_bottom = 604.0
 
-[node name="Label" type="Label" parent="Panel" unique_id=1543407574]
+[node name="TextEdit_Log" type="TextEdit" parent="Panel" unique_id=1708036061]
 layout_mode = 0
-offset_left = -118.0
-offset_top = 304.0
-offset_right = 523.0
-offset_bottom = 353.0
-text = "🚨 [SECURITY LOG]: MALICIOUS NETWORK INTERRUPTS INJECTED ON PORT 22 / 443
-⚠️ [CRITICAL]: CORE INFRASTRUCTURE SERVICES MUST REMAIN ACTIVE!"
+offset_right = 801.0
+offset_bottom = 501.0
+mouse_filter = 2
+theme_override_styles/normal = SubResource("StyleBoxEmpty_gk2va")
+theme_override_styles/focus = SubResource("StyleBoxEmpty_yk0c0")
+editable = false
 
-[node name="ProgressBar" type="ProgressBar" parent="Panel" unique_id=1316593849]
+[node name="LineEdit_IP" type="LineEdit" parent="Panel" unique_id=187166454]
 layout_mode = 0
-offset_left = 1.0
-offset_top = 1.0
-offset_right = 406.0
-offset_bottom = 28.0
-value = 50.0
+offset_left = 2.0
+offset_top = 499.0
+offset_right = 800.0
+offset_bottom = 596.0
+theme_override_styles/normal = SubResource("StyleBoxFlat_5knhg")
+theme_override_styles/focus = SubResource("StyleBoxFlat_5ko51")
 
-[node name="HBoxContainer" type="HBoxContainer" parent="Panel" unique_id=880862437]
-layout_mode = 0
-offset_top = -37.0
-offset_right = 408.0
-offset_bottom = 1.0
-theme_override_constants/separation = 82
-
-[node name="Label" type="Label" parent="Panel/HBoxContainer" unique_id=1220555215]
-layout_mode = 2
-text = "[PID]"
-
-[node name="Label2" type="Label" parent="Panel/HBoxContainer" unique_id=223808609]
-layout_mode = 2
-text = "[PROCESS NAME]"
-
-[node name="Label3" type="Label" parent="Panel/HBoxContainer" unique_id=1413410551]
-layout_mode = 2
-text = "[ACTION]"
-
-[node name="VBoxContainer" type="VBoxContainer" parent="Panel" unique_id=168739785]
-layout_mode = 0
-offset_left = 1.0
-offset_top = 49.0
-offset_right = 405.0
-offset_bottom = 290.0
-
-[node name="Button1" type="Button" parent="Panel/VBoxContainer" unique_id=676372535]
-layout_mode = 2
-text = "4091 | backdoor_listener.sh"
-
-[node name="Button5" type="Button" parent="Panel/VBoxContainer" unique_id=1069443288]
-layout_mode = 2
-text = "8843 | ransomware_spreading.exe"
-
-[node name="Button6" type="Button" parent="Panel/VBoxContainer" unique_id=709264646]
-layout_mode = 2
-text = "1024 | cryptominer_network.sh"
-
-[node name="Button7" type="Button" parent="Panel/VBoxContainer" unique_id=1558459261]
-layout_mode = 2
-text = "3195 | sniffing_promiscuous.sh"
-
-[node name="Button2" type="Button" parent="Panel/VBoxContainer" unique_id=176317952]
-layout_mode = 2
-text = "5122 | malicious_ping_flood.py"
-
-[node name="Button3" type="Button" parent="Panel/VBoxContainer" unique_id=209345098]
-layout_mode = 2
-text = "0001 | core_router_gateway.sys"
-
-[node name="Button4" type="Button" parent="Panel/VBoxContainer" unique_id=771170331]
-layout_mode = 2
-text = "0002 | dhcp_server_daemon.pid"
-
-[connection signal="pressed" from="Panel/VBoxContainer/Button1" to="." method="_on_button_1_pressed"]
-[connection signal="pressed" from="Panel/VBoxContainer/Button5" to="." method="_on_button_5_pressed"]
-[connection signal="pressed" from="Panel/VBoxContainer/Button6" to="." method="_on_button_6_pressed"]
-[connection signal="pressed" from="Panel/VBoxContainer/Button7" to="." method="_on_button_7_pressed"]
-[connection signal="pressed" from="Panel/VBoxContainer/Button2" to="." method="_on_button_2_pressed"]
-[connection signal="pressed" from="Panel/VBoxContainer/Button3" to="." method="_on_button_3_pressed"]
-[connection signal="pressed" from="Panel/VBoxContainer/Button4" to="." method="_on_button_4_pressed"]
+[connection signal="text_submitted" from="Panel/LineEdit_IP" to="." method="_on_line_edit_ip_text_submitted"]

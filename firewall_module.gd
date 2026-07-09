@@ -1,140 +1,179 @@
 extends Control
 
-@onready var log_container = $Panel/VBoxContainer 
-# 🗑️ ลบ @onready var blue_screen และ error_label อันเก่าออกไปแล้ว
-@onready var rule_label = $Panel/Label2 
+# ==============================================================================
+# 🚨 1. ONREADY VARIABLES
+# ==============================================================================
+@onready var log_text_edit = $Panel/TextEdit_Log if has_node("Panel/TextEdit_Log") else null 
+@onready var command_input = $Panel/LineEdit_IP if has_node("Panel/LineEdit_IP") else null 
+
+var target_dept = ""
+var target_ip = "" 
 
 var is_game_over = false
-var hackers_blocked = 0  
-var win_condition = 7  # 📈 เพิ่มความยาก: ปรับเป็นต้องสกัดให้ได้ 7 ครั้งถึงจะชนะ
-var danger_port = 4444 
-var max_lives = 3
-var current_lives = 3
+var current_cli_mode = 0 # 0: User, 1: Privileged, 2: Config Mode
 
+var step_ip_blocked = false
+
+# ==============================================================================
+# ⚙️ 2. MAIN FIREWALL SYSTEM
+# ==============================================================================
 func _ready():
-	visibility_changed.connect(_on_window_visibility_changed)
-	# 🗑️ ลบคำสั่งเชื่อมต่อปุ่ม Restart ของจอฟ้าอันเก่าออกไปแล้ว
+	if command_input: 
+		command_input.text = ""
+	if log_text_edit:
+		log_text_edit.text = ""
+		
+	setup_firewall_challenge()
 
-func setup_game():
+func setup_firewall_challenge():
 	is_game_over = false
-	hackers_blocked = 0
-	current_lives = 3
+	current_cli_mode = 0 
+	step_ip_blocked = false
 	
-	# 😈 รีเซ็ตตัวคูณ CPU กลับมาเป็น 1 เท่าทุกครั้งที่เริ่มเกมใหม่
-	Global.mix_cpu_multiplier = 1.0 
-	
-	for child in log_container.get_children():
-		child.queue_free()
+	if command_input: 
+		command_input.text = ""
 		
-	# สุ่มพอร์ตอันตรายประจำรอบ
-	var port_pool = [4444, 8080, 3128, 5555, 2121]
-	danger_port = port_pool[randi() % port_pool.size()]
-	update_rule_ui()
-
-func update_rule_ui():
-	rule_label.text = "RULE: บล็อกเฉพาะ UDP พอร์ต " + str(danger_port) + " | ❤️ พลังชีวิต: " + str(current_lives) + "/" + str(max_lives)
-
-func _on_window_visibility_changed():
-	if is_visible_in_tree():
-		setup_game()
-		$Timer.start()
-	else:
-		$Timer.stop()
-
-# 🎲 ระบบสุ่มทราฟฟิกแบบสับขาหลอกขั้นสูง
-func _on_timer_timeout():
-	if is_game_over:
-		return 
+	var departments = [
+		{"name": "Accounting", "ip": "192.168.1.50"},
+		{"name": "HR", "ip": "192.168.2.10"},
+		{"name": "Marketing", "ip": "192.168.3.99"},
+		{"name": "R&D", "ip": "10.0.0.4"}
+	]
+	
+	var selected = departments[randi() % departments.size()]
+	target_dept = selected["name"]
+	target_ip = selected["ip"] 
+	
+	if log_text_edit:
+		log_text_edit.text = "--- SECURITY FIREWALL CLI V4.0 ---\n"
+		log_text_edit.text += "ALERT: Cyber Attack Detected on [" + target_dept + " Dept.]\n"
+		log_text_edit.text += "Format: 'access-list 1 deny [IP]' -> 'ex' -> 'save'\n" # 🟢 อัปเดตฟอร์แมตคำสั่งใหม่
+		log_text_edit.text += "ดูตารางคู่มือเพื่อค้นหา IP ของแผนกนี้ แล้วพิมพ์ 'enable' เพื่อเริ่มสกัดกั้น\n\n"
+		_print_prompt()
 		
-	var new_log = Button.new() 
-	var traffic_type = randi() % 4 # สุ่มรูปแบบข้อมูลจาก 4 หน้าต่างความเป็นไปได้
-	
-	var log_ip = "192.168.1." + str(randi() % 254 + 1)
-	var log_port = danger_port
-	var log_proto = "UDP"
-	var is_hacker = false
-	
-	match traffic_type:
-		0: # 🟥 1. True Hacker (ตรงเงื่อนไขอันตรายทั้งหมด)
-			log_ip = "10.0.0." + str(randi() % 99 + 1)
-			log_port = danger_port
-			log_proto = "UDP"
-			is_hacker = true
-			
-		1: # #️⃣ 2. Fake Out: พอร์ตตรง แต่ Protocol ผิด (TCP) -> คนปกติ
-			log_port = danger_port
-			log_proto = "TCP"
-			is_hacker = false
-			
-		2: # #️⃣ 3. Fake Out: Protocol ตรง (UDP) แต่พอร์ตปลอดภัย -> คนปกติ
-			var safe_ports = [80, 443, 22, 3306]
-			log_port = safe_ports[randi() % safe_ports.size()]
-			log_proto = "UDP"
-			is_hacker = false
-			
-		3: # 🟩 4. Pure Normal (ปลอดภัย 100%)
-			var safe_ports = [80, 443, 22, 3306]
-			log_port = safe_ports[randi() % safe_ports.size()]
-			log_proto = "TCP"
-			is_hacker = false
+	if command_input:
+		command_input.call_deferred("grab_focus") # 🟢 ป้องกันโฟกัสหลุดตอนเริ่มเกม
 
-	# ประกอบข้อความแสดงผลบนหน้าจอ
-	new_log.text = "[INBOUND] IP: " + log_ip + " | Port: " + str(log_port) + " | Protocol: " + log_proto
-	new_log.set_meta("is_hacker", is_hacker) 
+func _print_prompt():
+	if not log_text_edit: return
+	match current_cli_mode:
+		0: log_text_edit.text += "Switch> "
+		1: log_text_edit.text += "Switch# "
+		2: log_text_edit.text += "Switch(config)# "
+	_scroll_to_bottom()
 
-	new_log.pressed.connect(self._on_log_clicked.bind(new_log))
-	log_container.add_child(new_log)
+func _on_line_edit_ip_text_submitted(new_text: String) -> void:
+	if is_game_over or not is_visible_in_tree(): return
 	
-	# ระบบคิวล้นจอ (ถ้าหลุดขอบบนแล้วเป็นแฮกเกอร์ จะโดนหักเลือด)
-	if log_container.get_child_count() > 8: 
-		var oldest_log = log_container.get_child(0)
-		if oldest_log.get_meta("is_hacker") == true:
-			deduct_life("SYSTEM BREACHED: แฮกเกอร์เล็ดลอดเข้าสู่ระบบพอร์ต " + str(danger_port) + "!")
-			
-			# 😈 ถ้าอยู่ในโหมดผสม แล้วปล่อยแฮกเกอร์หลุด 
-			# สั่งเพิ่มความเร็วหลอด CPU ฝั่ง Task Manager ขึ้นอีกตัวละ +0.5 เท่าทันที!
-			if Global.is_mix_mode:
-				Global.mix_cpu_multiplier += 0.5
-				print("🔥 แฮกเกอร์หลุด! CPU Multiplier พุ่งเป็น: ", Global.mix_cpu_multiplier)
-				
-		oldest_log.queue_free()
-
-func _on_log_clicked(clicked_log):
-	if is_game_over:
+	var raw_command = new_text.strip_edges()
+	if command_input: 
+		command_input.text = "" 
+		
+	if raw_command == "": 
+		_print_to_terminal("")
+		_print_prompt()
+		if command_input: 
+			command_input.call_deferred("grab_focus")
 		return
 		
-	if clicked_log.get_meta("is_hacker") == true:
-		hackers_blocked += 1 
-		clicked_log.queue_free() 
-		update_rule_ui()
+	if log_text_edit:
+		log_text_edit.text += raw_command + "\n"
 		
-		if hackers_blocked >= win_condition:
-			$Timer.stop() 
-			
-			# 🟢 ส่งแต้มไปบอกตัวแปร Global ว่าด่านนี้เคลียร์แล้วนะ
-			Global.completed_modules_count += 1
-			
-			self.hide()   
-	else:
-		clicked_log.queue_free()
-		deduct_life("FATAL ERROR: คุณไปบล็อกทราฟฟิกพนักงานปกติ!")
-
-func deduct_life(reason_message):
-	current_lives -= 1
-	update_rule_ui()
+	await get_tree().create_timer(0.1).timeout
+	_process_firewall_command(raw_command)
 	
-	if current_lives <= 0:
-		trigger_game_over(reason_message)
+	if command_input:
+		command_input.call_deferred("grab_focus") # 🟢 บังคับล็อกโฟกัสหลังพิมพ์เสร็จทุกครั้ง ไม่ต้องคอยกดคลิกใหม่
 
-# 🌟 ฟังก์ชันจัดการการแพ้แบบดีดเข้าสู่หน้าจอฟ้าหลักของระบบ
-func trigger_game_over(reason_message):
+# ==============================================================================
+# 🎮 CLI COMMAND PROCESSING (ACCESS-LIST UPDATE)
+# ==============================================================================
+func _process_firewall_command(raw_command: String):
+	
+	# 🟩 โหมดที่ 0: User Mode
+	if current_cli_mode == 0:
+		if raw_command == "enable":
+			current_cli_mode = 1
+		elif raw_command == "conf t" or raw_command.begins_with("access-list ") or raw_command == "exit" or raw_command == "ex" or raw_command == "save":
+			_print_to_terminal("% Command rejected: ต้องกรอกคำสั่ง 'enable' เพื่อเข้าสิทธิ์แอดมินก่อน")
+		else:
+			_print_to_terminal("% Unknown command. (พิมพ์ 'enable' เพื่อเริ่มต้น)")
+
+	# 🟩 โหมดที่ 1: Privileged EXEC Mode
+	elif current_cli_mode == 1:
+		if raw_command == "configure terminal" or raw_command == "conf t":
+			current_cli_mode = 2
+			_print_to_terminal("Enter configuration commands, one per line. End with 'exit' or 'ex'.")
+		elif raw_command == "save":
+			if step_ip_blocked:
+				_print_to_terminal("\n🛡️ STATUS: ATTACK STOPPED! " + target_dept + " Dept. IS NOW SECURE.")
+				_print_to_terminal("🟢 FIREWALL RULES SUCCESSFULLY SAVED.")
+				_check_win_condition()
+				if is_game_over: return
+			else:
+				_print_to_terminal("% Command rejected: คุณยังไม่ได้เขียนกฎบล็อก IP แฮกเกอร์เลย!")
+		elif raw_command == "exit" or raw_command == "ex": 
+			_print_to_terminal("% Connection closed.")
+		else:
+			_print_to_terminal("% Unknown command. (พิมพ์ 'conf t' เพื่อตั้งค่า หรือ 'save' เพื่อบันทึก)")
+
+	# 🟩 โหมดที่ 2: Global Configuration Mode
+	elif current_cli_mode == 2:
+		
+		# 🛑 ตรวจสอบคำสั่งขึ้นต้นด้วย access-list 1 deny 
+		if raw_command.begins_with("access-list 1 deny "):
+			var ip_arg = raw_command.replace("access-list 1 deny ", "").strip_edges()
+			if ip_arg == target_ip: 
+				step_ip_blocked = true
+				_print_to_terminal("Success: Standard Access List 1 updated. Traffic from " + ip_arg + " is now dropped.")
+				_print_to_terminal("ℹ️ [System]: พิมพ์ 'ex' เพื่อออกจากโหมดปรับแต่ง แล้วพิมพ์ 'save' เพื่อบันทึกข้อมูล")
+			else:
+				trigger_game_over("FATAL BLOCK ERROR:\nคุณใส่ IP ผิดพลาด! ไปสั่งบล็อกแผนกอื่นที่ไม่ได้โดนโจมตี ทำให้ระบบล่ม")
+				return
+		
+		# ดักกรณีพิมพ์สั้นไป หรือพิมพ์ผิดรูปแบบ
+		elif raw_command.begins_with("deny ip "):
+			_print_to_terminal("% Invalid command: ในโหมดเลเยอร์นี้ ต้องระบุกลุ่มหมายเลขด้วย เช่น 'access-list 1 deny [IP]'")
+				
+		elif raw_command == "save":
+			_print_to_terminal("% Command rejected: ไม่สามารถเซฟในโหมดปรับแต่งได้ กรุณาพิมพ์ 'ex' ออกไปก่อน")
+				
+		elif raw_command == "exit" or raw_command == "ex": 
+			current_cli_mode = 1
+			_print_to_terminal("Leaving Configuration Mode.")
+		else:
+			_print_to_terminal("% Invalid syntax. (คำสั่งที่รองรับในโหมดนี้: 'access-list 1 deny [IP]', 'ex')")
+
+	_print_prompt()
+
+# ==============================================================================
+# 🎯 3. SUB SYSTEMS
+# ==============================================================================
+func _print_to_terminal(text: String):
+	if log_text_edit:
+		log_text_edit.text += text + "\n"
+		_scroll_to_bottom()
+
+func _scroll_to_bottom():
+	if log_text_edit:
+		log_text_edit.scroll_vertical = log_text_edit.get_line_count()
+
+func _check_win_condition():
+	if "completed_modules_count" in Global:
+		Global.completed_modules_count += 1
+		
 	is_game_over = true
-	$Timer.stop() 
-	
-	# 1. ส่งรายละเอียดและรหัสข้อผิดพลาดของ Firewall ไปฝากไว้ที่ตัวแปรกลาง
-	Global.game_over_reason = "❌ FIREWALL SECURITY COLLAPSE\n" + reason_message + "\nเครือข่ายโดนทำลายโดยสมบูรณ์!"
-	
-	# 2. กระโดดข้ามหน้าต่างสี่เหลี่ยม เปลี่ยนฉากใหญ่เต็มจอไปที่ฉากจอฟ้าตัวใหม่
+	await get_tree().create_timer(1.5).timeout
+	_close_this_popup()
+
+func trigger_game_over(reason_text):
+	is_game_over = true
+	Global.game_over_reason = "❌ FIREWALL SECURITY COLLAPSE\n" + reason_text
 	get_tree().change_scene_to_file("res://blue_screen_scene.tscn")
 
-# 🗑️ ลบฟังก์ชัน _on_restart_button_pressed แบบเก่าออกไปแล้ว
+func _close_this_popup():
+	var parent_node = get_parent()
+	if parent_node and (parent_node is Window or parent_node.name.begins_with("Window")):
+		parent_node.hide()
+	else:
+		self.hide()

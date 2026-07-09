@@ -2,6 +2,16 @@
 
 [ext_resource type="Script" uid="uid://bwl7q1xejbh6m" path="res://firewall_module.gd" id="1_12joa"]
 
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_12joa"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_cxs4b"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_wyns8"]
+bg_color = Color(0, 0, 0, 1)
+border_width_top = 1
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_xc3ux"]
+
 [node name="Firewall_Module" type="Control" unique_id=483616568]
 layout_mode = 3
 anchors_preset = 15
@@ -24,22 +34,25 @@ offset_top = -1.0
 offset_right = 794.0
 offset_bottom = 599.0
 
-[node name="Label2" type="Label" parent="Panel" unique_id=1730684003]
+[node name="TextEdit_Log" type="TextEdit" parent="Panel" unique_id=886631405]
 layout_mode = 0
-offset_left = 9.0
-offset_top = 4.0
-offset_right = 439.0
-offset_bottom = 27.0
-text = "RULE: ห้ามรับข้อมูล Protocol: UDP ผ่าน Port: 4444 เด็ดขาด!"
+offset_right = 801.0
+offset_bottom = 501.0
+focus_mode = 0
+mouse_filter = 2
+theme_override_constants/line_spacing = 7
+theme_override_styles/normal = SubResource("StyleBoxEmpty_12joa")
+theme_override_styles/focus = SubResource("StyleBoxEmpty_cxs4b")
+editable = false
 
-[node name="VBoxContainer" type="VBoxContainer" parent="Panel" unique_id=1420258344]
+[node name="LineEdit_IP" type="LineEdit" parent="Panel" unique_id=394478065]
 layout_mode = 0
-offset_left = 52.0
-offset_top = 51.0
-offset_right = 776.0
-offset_bottom = 340.0
+offset_left = 2.0
+offset_top = 499.0
+offset_right = 800.0
+offset_bottom = 596.0
+theme_override_constants/minimum_character_width = 7
+theme_override_styles/normal = SubResource("StyleBoxFlat_wyns8")
+theme_override_styles/focus = SubResource("StyleBoxFlat_xc3ux")
 
-[node name="Timer" type="Timer" parent="." unique_id=379921008]
-wait_time = 0.8
-
-[connection signal="timeout" from="Timer" to="." method="_on_timer_timeout"]
+[connection signal="text_submitted" from="Panel/LineEdit_IP" to="." method="_on_line_edit_ip_text_submitted"]

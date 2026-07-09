@@ -1,7 +1,7 @@
 extends Node
 
 # ตัวแปรกลางเอาไว้เช็กโหมด: false = แยกเล่น (Training), true = โหมดผสม (Mix)
-var is_mix_mode = true
+var is_mix_mode = false
 
 # ตัวแปรเก็บเรื่องที่เลือก: "network", "task_manager" หรือ "mix"
 var selected_topic = ""

@@ -2,6 +2,16 @@
 
 [ext_resource type="Script" uid="uid://bk2m5pwuj7mx5" path="res://pdpa_module.gd" id="1_edew7"]
 
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_edew7"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_w2pco"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_kmglk"]
+bg_color = Color(0, 0, 0, 1)
+border_width_top = 1
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_euqen"]
+
 [node name="PDPA_Module" type="Control" unique_id=771819813]
 layout_mode = 3
 anchors_preset = 15
@@ -17,72 +27,30 @@ script = ExtResource("1_edew7")
 metadata/_edit_horizontal_guides_ = [540.0]
 metadata/_edit_vertical_guides_ = [959.0]
 
-[node name="Panel" type="Panel" parent="." unique_id=1210043680]
-layout_mode = 0
-offset_left = -7.0
-offset_top = 1.0
-offset_right = 793.0
-offset_bottom = 601.0
-
-[node name="Label_Title" type="Label" parent="Panel" unique_id=270431833]
-layout_mode = 0
-offset_left = 6.0
-offset_top = 9.0
-offset_right = 262.0
-offset_bottom = 52.0
-text = "ACCESS CONTROL SYSTEM V1.0"
-
-[node name="Label_Request" type="Label" parent="Panel" unique_id=1099330649]
-layout_mode = 0
-offset_left = 31.0
-offset_top = 76.0
-offset_right = 283.0
-offset_bottom = 119.0
-text = "กล่องโชว์โจทย์คำร้องขอเข้าถึงข้อมูล"
-
-[node name="Label_Timer" type="Label" parent="Panel" unique_id=414818531]
-layout_mode = 0
-offset_left = 514.0
-offset_top = 7.0
-offset_right = 691.0
-offset_bottom = 43.0
-text = "ตัวเลขเวลานับถอยหลัง"
-
-[node name="Button_Allow" type="Button" parent="Panel" unique_id=1863745894]
-layout_mode = 0
-offset_left = 101.0
-offset_top = 529.0
-offset_right = 314.0
-offset_bottom = 572.0
-text = "ปุ่มกดอนุญาต"
-
-[node name="Button_Deny" type="Button" parent="Panel" unique_id=898821239]
-layout_mode = 0
-offset_left = 493.0
-offset_top = 533.0
-offset_right = 681.0
-offset_bottom = 577.0
-text = "ปุ่มกดปฏิเสธ"
-
-[node name="ManualPanel" type="Panel" parent="Panel" unique_id=753187217]
-layout_mode = 0
-offset_left = 345.0
-offset_top = 340.0
-offset_right = 794.0
-offset_bottom = 498.0
-
-[node name="Label_ManualText" type="Label" parent="Panel/ManualPanel" unique_id=360716521]
+[node name="Panel" type="Panel" parent="." unique_id=962234325]
+process_mode = 3
 layout_mode = 0
 offset_left = 5.0
-offset_top = 9.0
-offset_right = 449.0
-offset_bottom = 148.0
-text = "[ PRIVACY POLICY MANUAL ]
-• พนักงานฝึกงาน (Intern) -> ดูได้เฉพาะ Public Data
-• ฝ่ายบุคคล (HR) -> ดูประวัติพนักงานได้
-• ข้อมูลการเงิน (Financial) -> ผู้จัดการ (Manager) ขึ้นไปเท่านั้น
-• กฎหมาย PDPA -> ลูกค้ามีสิทธิ์สั่ง \"ลบข้อมูล\" (Delete) ได้เสมอ"
-autowrap_mode = 1
+offset_top = 4.0
+offset_right = 805.0
+offset_bottom = 604.0
 
-[connection signal="pressed" from="Panel/Button_Allow" to="." method="_on_button_allow_pressed"]
-[connection signal="pressed" from="Panel/Button_Deny" to="." method="_on_button_deny_pressed"]
+[node name="TextEdit_Log" type="TextEdit" parent="Panel" unique_id=487632764]
+layout_mode = 0
+offset_right = 801.0
+offset_bottom = 501.0
+mouse_filter = 2
+theme_override_styles/normal = SubResource("StyleBoxEmpty_edew7")
+theme_override_styles/focus = SubResource("StyleBoxEmpty_w2pco")
+editable = false
+
+[node name="LineEdit_IP" type="LineEdit" parent="Panel" unique_id=2012808971]
+layout_mode = 0
+offset_left = 2.0
+offset_top = 499.0
+offset_right = 800.0
+offset_bottom = 596.0
+theme_override_styles/normal = SubResource("StyleBoxFlat_kmglk")
+theme_override_styles/focus = SubResource("StyleBoxFlat_euqen")
+
+[connection signal="text_submitted" from="Panel/LineEdit_IP" to="." method="_on_line_edit_ip_text_submitted"]
