@@ -34,20 +34,17 @@ func setup_nat_challenge():
 		command_input.text = ""
 		
 	# สุ่มอินเตอร์เฟสและไอพีขาออก (Public IP) ของ ISP
-	var interfaces = ["Gi0/0", "Gi0/1", "fa0/0"]
+	var interfaces = ["Gi0/1", "Gi0/2", "fa0/1"]
 	target_interface = interfaces[randi() % interfaces.size()]
 	target_acl = [1, 5, 10][randi() % 3] 
 	
-	var ip_list = ["203.0.113.1", "198.51.100.5", "202.12.99.4"]
+	var ip_list = ["192.168.1.50", "192.168.2.10", "192.168.3.99"]
 	public_ip = ip_list[randi() % ip_list.size()]
 	
 	# ข้อความต้อนรับเข้าสู่ด่านและแจ้งคำสั่งโจทย์
-	var startup_msg = "--- GATEWAY ROUTER NAT CLI V5.2 ---\n"
+	var startup_msg = "--- GATEWAY SWITCH NAT ---\n"
 	startup_msg += "🚨 EMERGENCY: Internal users cannot access the Internet (No NAT Translation).\n"
-	startup_msg += "ISP Connection Link: " + target_interface + " | Assigned Public IP: " + public_ip + "\n"
-	startup_msg += "Allowed Local Traffic: Access-List " + str(target_acl) + "\n"
-	startup_msg += "Format: 'ip nat inside source list [เลขACL] interface [ชื่อพอร์ต] overload' -> 'ex' -> 'save'\n"
-	startup_msg += "พิมพ์คำสั่ง 'enable' เพื่อเข้ายึดสิทธิ์ระบบ...\n\n"
+
 	
 	_write_to_terminal_safe(startup_msg)
 	_print_prompt()

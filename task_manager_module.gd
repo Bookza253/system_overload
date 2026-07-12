@@ -37,9 +37,9 @@ func setup_route_challenge():
 		
 	# สุ่มเลือก Scenario เส้นทางเน็ตเวิร์กที่ล่ม
 	var scenarios = [
-		{"dest": "HQ_Server", "net": "10.10.10.0", "mask": "255.255.255.0", "next": "192.168.1.1"},
-		{"dest": "Branch_Office", "net": "172.16.50.0", "mask": "255.255.255.0", "next": "10.0.0.2"},
-		{"dest": "Cloud_Storage", "net": "8.8.8.0", "mask": "255.255.255.0", "next": "192.168.10.254"}
+		{"dest": "HQ_Server", "net": "192.168.55.0", "mask": "255.255.255.0", "next": "192.168.1.1"},
+		{"dest": "Branch_Office", "net": "192.168.50.0", "mask": "255.255.255.0", "next": "192.168.2.55"},
+		{"dest": "Cloud_Storage", "net": "192.168.71.0", "mask": "255.255.255.0", "next": "192.168.10.254"}
 	]
 	
 	var selected = scenarios[randi() % scenarios.size()]
@@ -49,11 +49,9 @@ func setup_route_challenge():
 	target_next_hop = selected["next"]
 	
 	if log_text_edit:
-		log_text_edit.text = "--- CORE ROUTER OS V4.0 TERMINAL ---\n"
+		log_text_edit.text = "--- SWITCH OS TERMINAL ---\n"
 		log_text_edit.text += "⚠️ ALERT: Connection to [" + destination_name + "] is DOWN! (No Route to Host)\n"
 		log_text_edit.text += "Required Path: Network: " + target_network + " | Mask: " + target_mask + " | Next-Hop: " + target_next_hop + "\n"
-		log_text_edit.text += "Format: 'ip route [Network] [Mask] [Next-Hop]' -> 'ex' -> 'save'\n"
-		log_text_edit.text += "พิมพ์คำสั่ง 'enable' เพื่อเริ่มจัดการระบบ\n\n"
 		_print_prompt()
 		
 	if command_input:

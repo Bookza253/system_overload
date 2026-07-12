@@ -37,7 +37,7 @@ func setup_firewall_challenge():
 		{"name": "Accounting", "ip": "192.168.1.50"},
 		{"name": "HR", "ip": "192.168.2.10"},
 		{"name": "Marketing", "ip": "192.168.3.99"},
-		{"name": "R&D", "ip": "10.0.0.4"}
+		{"name": "R&D", "ip": "192.168.4.25"}
 	]
 	
 	var selected = departments[randi() % departments.size()]
@@ -45,10 +45,9 @@ func setup_firewall_challenge():
 	target_ip = selected["ip"] 
 	
 	if log_text_edit:
-		log_text_edit.text = "--- SECURITY FIREWALL CLI V4.0 ---\n"
+		log_text_edit.text = "--- SECURITY FIREWALL ---\n"
 		log_text_edit.text += "ALERT: Cyber Attack Detected on [" + target_dept + " Dept.]\n"
-		log_text_edit.text += "Format: 'access-list 1 deny [IP]' -> 'ex' -> 'save'\n" # 🟢 อัปเดตฟอร์แมตคำสั่งใหม่
-		log_text_edit.text += "ดูตารางคู่มือเพื่อค้นหา IP ของแผนกนี้ แล้วพิมพ์ 'enable' เพื่อเริ่มสกัดกั้น\n\n"
+
 		_print_prompt()
 		
 	if command_input:
