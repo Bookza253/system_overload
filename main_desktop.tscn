@@ -15,8 +15,8 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_xr4pk")
-metadata/_edit_horizontal_guides_ = [541.0]
-metadata/_edit_vertical_guides_ = [961.0]
+metadata/_edit_horizontal_guides_ = [-23.0]
+metadata/_edit_vertical_guides_ = [-118.0]
 
 [node name="ColorRect" type="ColorRect" parent="." unique_id=1718778005]
 layout_mode = 0
@@ -43,6 +43,7 @@ horizontal_alignment = 1
 vertical_alignment = 1
 
 [node name="Button_TaskManager_Mod" type="Button" parent="." unique_id=802173448]
+visible = false
 layout_mode = 0
 offset_left = 3.0
 offset_top = 3.0
@@ -52,6 +53,7 @@ icon = ExtResource("1_pyqms")
 expand_icon = true
 
 [node name="Button_Firewall" type="Button" parent="." unique_id=1017060860]
+visible = false
 layout_mode = 0
 offset_left = 2.0
 offset_top = 76.0
@@ -61,6 +63,7 @@ icon = ExtResource("1_pyqms")
 expand_icon = true
 
 [node name="Button_Router" type="Button" parent="." unique_id=875990078]
+visible = false
 layout_mode = 0
 offset_left = 2.0
 offset_top = 151.0
@@ -70,6 +73,7 @@ icon = ExtResource("1_pyqms")
 expand_icon = true
 
 [node name="Button_PDPA" type="Button" parent="." unique_id=307648688]
+visible = false
 layout_mode = 0
 offset_left = 5.0
 offset_top = 225.0

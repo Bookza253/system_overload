@@ -6,28 +6,24 @@ extends Control
 @onready var win_vlan = $Window_VLAN 
 
 func _ready():
-	# 🔒 ซ่อนหน้าต่าง Popup ทั้งหมดก่อนแบบปลอดภัย
+	# 🔒 ซ่อนหน้าต่าง Popup ทั้งหมดก่อนแบบปลอดภัย (โค้ดเดิม)
 	if has_node("Window_TaskManager"): win_task_manager.hide()
 	if has_node("Window_Router"): win_router.hide()
 	if has_node("Window_Firewall"): win_firewall.hide()
 	if has_node("Window_VLAN"): win_vlan.hide()
 	
-	# 🔒 🌟 แช่แข็งลูปเกมของทุกโมดูลไว้ก่อนตอนเริ่มเกม
-	if has_node("Window_TaskManager/TaskManager_Module"): 
-		$Window_TaskManager/TaskManager_Module.set_process(false)
-	if has_node("Window_Firewall/Firewall_Module"): 
-		$Window_Firewall/Firewall_Module.set_process(false)
-	if has_node("Window_Router/Router_Module"): 
-		$Window_Router/Router_Module.set_process(false)
-	if has_node("Window_VLAN/PDPA_Module"): 
-		$Window_VLAN/PDPA_Module.set_process(false)
+	# 🔒 แช่แข็งลูปเกมของทุกโมดูลไว้ก่อนตอนเริ่มเกม (โค้ดเดิม)
+	if has_node("Window_TaskManager/TaskManager_Module"): $Window_TaskManager/TaskManager_Module.set_process(false)
+	if has_node("Window_Firewall/Firewall_Module"): $Window_Firewall/Firewall_Module.set_process(false)
+	if has_node("Window_Router/Router_Module"): $Window_Router/Router_Module.set_process(false)
+	if has_node("Window_VLAN/PDPA_Module"): $Window_VLAN/PDPA_Module.set_process(false)
 	
 	# 🔒 ซ่อนปุ่มไอคอนทั้งหมดบน Desktop ไว้ก่อนเพื่อรอเปิดตามโหมด
 	_hide_all_desktop_buttons()
 	
 	# 🎮 ตรวจสอบเงื่อนไขโหมด
 	if Global.is_mix_mode:
-		_show_button("Button_TaskManager_M")
+		_show_button("Button_TaskManager_Mod") # 🎯 แก้เป็น _Mod
 		_show_button("Button_Firewall")
 		_show_button("Button_Router")
 		_show_button("Button_PDPA") 
@@ -36,7 +32,7 @@ func _ready():
 			"network":
 				_show_button("Button_Firewall")
 			"task_manager":
-				_show_button("Button_TaskManager_M")
+				_show_button("Button_TaskManager_Mod") # 🎯 แก้เป็น _Mod
 			"router":
 				_show_button("Button_Router")
 			"vlan":
@@ -44,7 +40,7 @@ func _ready():
 
 # ฟังก์ชันช่วยซ่อนปุ่มแบบปลอดภัย
 func _hide_all_desktop_buttons():
-	if has_node("Button_TaskManager_M"): $Button_TaskManager_M.hide()
+	if has_node("Button_TaskManager_Mod"): $Button_TaskManager_Mod.hide() # 🎯 แก้เป็น _Mod
 	if has_node("Button_Firewall"): $Button_Firewall.hide()
 	if has_node("Button_Router"): $Button_Router.hide()
 	if has_node("Button_PDPA"): $Button_PDPA.hide()
