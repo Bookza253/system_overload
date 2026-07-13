@@ -55,7 +55,7 @@ func setup_switch_challenge():
 			target_ip = "192.168.3.77"
 			
 	if log_text_edit:
-		log_text_edit.text = "--- SWITCH OS TERMINAL ---\n"
+		log_text_edit.text = "--- VLAN ---\n"
 		log_text_edit.text += "Device Boot Completed. Ready for configuration...\n"
 		log_text_edit.text += "ALERT: Port " + target_port + " link-state changed to DOWN (VLAN Mismatch).\n"
 

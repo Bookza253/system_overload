@@ -4,7 +4,7 @@ extends Control
 @onready var win_router = $Window_Router
 @onready var win_firewall = $Window_Firewall
 @onready var win_vlan = $Window_VLAN 
-@onready var win_terminal = $Window_Terminal # หน้าต่างคู่มือบอกข้อมูลสเปกด่าน
+@onready var win_terminal = $Popup_Terminal
 
 func _ready():
 	# 🔒 ซ่อนหน้าต่าง Popup ทั้งหมดก่อนเริ่มเกม
@@ -12,20 +12,19 @@ func _ready():
 	if has_node("Window_Router"): win_router.hide()
 	if has_node("Window_Firewall"): win_firewall.hide()
 	if has_node("Window_VLAN"): win_vlan.hide()
-	if has_node("Window_Terminal"): win_terminal.hide() 
 	
 	# 🔒 แช่แข็งลูปเกมของทุกโมดูลไว้ชั่วคราว
 	if has_node("Window_TaskManager/TaskManager_Module"): $Window_TaskManager/TaskManager_Module.set_process(false)
 	if has_node("Window_Firewall/Firewall_Module"): $Window_Firewall/Firewall_Module.set_process(false)
 	if has_node("Window_Router/Router_Module"): $Window_Router/Router_Module.set_process(false)
 	if has_node("Window_VLAN/PDPA_Module"): $Window_VLAN/PDPA_Module.set_process(false)
-	if has_node("Window_Terminal/Terminal_Module"): $Window_Terminal/Terminal_Module.set_process(false) 
+	if has_node("Popup_Terminal/Terminal_Module"): $Popup_Terminal/Terminal_Module.set_process(false)
 	
 	# 🔒 ซ่อนปุ่มไอคอนทั้งหมดบนเดสก์ท็อปก่อน
 	_hide_all_desktop_buttons()
 	
-	# 🟢 บังคับให้ปุ่มคู่มือโจทย์ (Button_Terminal) แสดงขึ้นมาในทุกๆ โหมดเสมอ
-	_show_button("Button_Terminal")
+	# 🟢 บังคับให้ปุ่มคู่มือโจทย์ (Window_Terminal) แสดงขึ้นมาในทุกๆ โหมดเสมอ
+	_show_button("Window_Terminal")
 	
 	# 🎮 เปิดแสดงปุ่มของภารกิจหลักตามวิชาที่เลือกมา
 	match Global.selected_topic:
@@ -44,7 +43,7 @@ func _hide_all_desktop_buttons():
 	if has_node("Button_Firewall"): $Button_Firewall.hide()
 	if has_node("Button_Router"): $Button_Router.hide()
 	if has_node("Button_PDPA"): $Button_PDPA.hide()
-	if has_node("Button_Terminal"): $Button_Terminal.hide() 
+	if has_node("Window_Terminal"): $Window_Terminal.hide() 
 
 # ฟังก์ชันช่วยเปิดปุ่มแบบปลอดภัย
 func _show_button(button_name: String):
@@ -67,11 +66,11 @@ func _on_button_router_pressed():
 func _on_button_pdpa_pressed():
 	_open_window(win_vlan, $Window_VLAN/PDPA_Module)
 
-func _on_button_terminal_pressed(): 
-	# สั่งให้อัปเดตข้อความข้อมูลของด่านปัจจุบันก่อนเปิดหน้าต่างขึ้นมาแสดงผล
-	if $Window_Terminal/Terminal_Module.has_method("update_cheat_sheet_info"):
-		$Window_Terminal/Terminal_Module.update_cheat_sheet_info()
-	_open_window(win_terminal, $Window_Terminal/Terminal_Module)
+func _on_window_terminal_pressed() -> void:
+	_open_window($Popup_Terminal, $Popup_Terminal/Terminal_Module)
+	
+	
+
 
 # ฟังก์ชันส่วนกลางสำหรับจัดการขั้นตอนเปิดหน้าต่าง
 func _open_window(win_node, module_node):
@@ -89,7 +88,7 @@ func _open_window(win_node, module_node):
 	win_node.grab_focus()
 
 # =========================================================
-# ❌ SECTION: ฟังก์ชันปิดหน้าต่าง (ถอดระบบย้อมสีออกแล้ว)
+# ❌ SECTION: ฟังก์ชันปิดหน้าต่าง 
 # =========================================================
 
 func _on_window_task_manager_close_requested():
@@ -104,8 +103,8 @@ func _on_window_router_close_requested():
 func _on_window_vlan_close_requested():
 	_close_window(win_vlan, $Window_VLAN/PDPA_Module)
 
-func _on_window_terminal_close_requested(): 
-	_close_window(win_terminal, $Window_Terminal/Terminal_Module)
+func _on_popup_terminal_close_requested() -> void:
+	_close_window(win_terminal, $Popup_Terminal/Terminal_Module)
 
 # ฟังก์ชันส่วนกลางสำหรับจัดการขั้นตอนปิดหน้าต่าง (เหลือเฉพาะการซ่อนและปิดลูปสคริปต์)
 func _close_window(win_node, module_node):
@@ -121,7 +120,3 @@ func _on_button_logout_pressed() -> void:
 	if "completed_modules_count" in Global: 
 		Global.completed_modules_count = 0
 	get_tree().change_scene_to_file("res://mode_selection.tscn")
-
-
-func _on_window_terminal_pressed() -> void:
-	pass # Replace with function body.

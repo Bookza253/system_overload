@@ -45,7 +45,7 @@ func setup_firewall_challenge():
 	target_ip = selected["ip"] 
 	
 	if log_text_edit:
-		log_text_edit.text = "--- SECURITY FIREWALL ---\n"
+		log_text_edit.text = "--- FIREWALL ---\n"
 		log_text_edit.text += "ALERT: Cyber Attack Detected on [" + target_dept + " Dept.]\n"
 
 		_print_prompt()

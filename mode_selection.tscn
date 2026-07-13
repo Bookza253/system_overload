@@ -37,7 +37,7 @@ layout_mode = 2
 
 [node name="SystemButton" type="Button" parent="VBoxContainer/TrainingSubMenu" unique_id=459025182]
 layout_mode = 2
-text = "Ping Test & Cable Check"
+text = "Routing"
 
 [node name="NetworkButton" type="Button" parent="VBoxContainer/TrainingSubMenu" unique_id=872585088]
 layout_mode = 2
@@ -45,11 +45,11 @@ text = "Firewall"
 
 [node name="Button_Router_Topic" type="Button" parent="VBoxContainer/TrainingSubMenu" unique_id=287480755]
 layout_mode = 2
-text = "Router Routing"
+text = "Change VLAN"
 
 [node name="Button_PDPA_Topic" type="Button" parent="VBoxContainer/TrainingSubMenu" unique_id=1410389049]
 layout_mode = 2
-text = "DHCP IP Assign"
+text = "NAT"
 
 [connection signal="pressed" from="VBoxContainer/TrainingSubMenu/Button_Router_Topic" to="." method="_on_button_router_topic_pressed"]
 [connection signal="pressed" from="VBoxContainer/TrainingSubMenu/Button_PDPA_Topic" to="." method="_on_button_pdpa_topic_pressed"]

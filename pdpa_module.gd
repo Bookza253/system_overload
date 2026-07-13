@@ -42,8 +42,9 @@ func setup_nat_challenge():
 	public_ip = ip_list[randi() % ip_list.size()]
 	
 	# ข้อความต้อนรับเข้าสู่ด่านและแจ้งคำสั่งโจทย์
-	var startup_msg = "--- GATEWAY SWITCH NAT ---\n"
+	var startup_msg = "--- NAT ---\n"
 	startup_msg += "🚨 EMERGENCY: Internal users cannot access the Internet (No NAT Translation).\n"
+	startup_msg += "▪️ Configure NAT Outbound Interface: " + str(target_interface) + "\n"
 
 	
 	_write_to_terminal_safe(startup_msg)

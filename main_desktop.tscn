@@ -7,6 +7,7 @@
 [ext_resource type="PackedScene" uid="uid://cnsch1bd3k5mo" path="res://router_module.tscn" id="5_xjri4"]
 [ext_resource type="PackedScene" uid="uid://c6ykx7s1r1a48" path="res://pdpa_module.tscn" id="6_btvhs"]
 [ext_resource type="Texture2D" uid="uid://jukmxe8pt4aj" path="res://enter.png" id="7_f7fdd"]
+[ext_resource type="Script" uid="uid://pry7sh8rye1m" path="res://Window_Terminal.gd" id="8_tn72c"]
 
 [node name="MainDesktop" type="Control" unique_id=1783687923]
 layout_mode = 3
@@ -156,12 +157,34 @@ expand_icon = true
 
 [node name="Popup_Terminal" type="Window" parent="." unique_id=273347381]
 oversampling_override = 1.0
+initial_position = 2
+size = Vector2i(800, 600)
+visible = false
+transient = true
 
-[node name="Control" type="Control" parent="Popup_Terminal" unique_id=22219040]
+[node name="Terminal_Module" type="Control" parent="Popup_Terminal" unique_id=22219040]
 layout_mode = 3
-anchors_preset = 0
-offset_right = 40.0
-offset_bottom = 40.0
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("8_tn72c")
+
+[node name="Label_Info" type="Label" parent="Popup_Terminal/Terminal_Module" unique_id=2019076884]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -387.0
+offset_top = -298.5
+offset_right = 387.0
+offset_bottom = 298.5
+grow_horizontal = 2
+grow_vertical = 2
+autowrap_mode = 2
 
 [connection signal="pressed" from="Button_TaskManager_Mod" to="." method="_on_button_pressed"]
 [connection signal="pressed" from="Button_Firewall" to="." method="_on_button_firewall_pressed"]
@@ -173,3 +196,4 @@ offset_bottom = 40.0
 [connection signal="close_requested" from="Window_VLAN" to="." method="_on_window_vlan_close_requested"]
 [connection signal="pressed" from="Button_Logout" to="." method="_on_button_logout_pressed"]
 [connection signal="pressed" from="Window_Terminal" to="." method="_on_window_terminal_pressed"]
+[connection signal="close_requested" from="Popup_Terminal" to="." method="_on_popup_terminal_close_requested"]

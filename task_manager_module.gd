@@ -49,7 +49,7 @@ func setup_route_challenge():
 	target_next_hop = selected["next"]
 	
 	if log_text_edit:
-		log_text_edit.text = "--- SWITCH OS TERMINAL ---\n"
+		log_text_edit.text = "--- ROUTING ---\n"
 		log_text_edit.text += "⚠️ ALERT: Connection to [" + destination_name + "] is DOWN! (No Route to Host)\n"
 		log_text_edit.text += "Required Path: Network: " + target_network + " | Mask: " + target_mask + " | Next-Hop: " + target_next_hop + "\n"
 		_print_prompt()
