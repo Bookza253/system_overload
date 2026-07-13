@@ -144,6 +144,25 @@ offset_bottom = 1023.0
 icon = ExtResource("7_f7fdd")
 expand_icon = true
 
+[node name="Window_Terminal" type="Button" parent="." unique_id=275709142]
+visible = false
+layout_mode = 0
+offset_left = 3.0
+offset_top = 308.0
+offset_right = 73.0
+offset_bottom = 378.0
+icon = ExtResource("1_pyqms")
+expand_icon = true
+
+[node name="Popup_Terminal" type="Window" parent="." unique_id=273347381]
+oversampling_override = 1.0
+
+[node name="Control" type="Control" parent="Popup_Terminal" unique_id=22219040]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
 [connection signal="pressed" from="Button_TaskManager_Mod" to="." method="_on_button_pressed"]
 [connection signal="pressed" from="Button_Firewall" to="." method="_on_button_firewall_pressed"]
 [connection signal="pressed" from="Button_Router" to="." method="_on_button_router_pressed"]
@@ -153,3 +172,4 @@ expand_icon = true
 [connection signal="close_requested" from="Window_Firewall" to="." method="_on_window_firewall_close_requested"]
 [connection signal="close_requested" from="Window_VLAN" to="." method="_on_window_vlan_close_requested"]
 [connection signal="pressed" from="Button_Logout" to="." method="_on_button_logout_pressed"]
+[connection signal="pressed" from="Window_Terminal" to="." method="_on_window_terminal_pressed"]

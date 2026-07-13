@@ -51,9 +51,5 @@ text = "Router Routing"
 layout_mode = 2
 text = "DHCP IP Assign"
 
-[node name="MixModeButton" type="Button" parent="VBoxContainer" unique_id=107611570]
-layout_mode = 2
-text = "🔴 SYSTEM OVERLOAD (MIX)"
-
 [connection signal="pressed" from="VBoxContainer/TrainingSubMenu/Button_Router_Topic" to="." method="_on_button_router_topic_pressed"]
 [connection signal="pressed" from="VBoxContainer/TrainingSubMenu/Button_PDPA_Topic" to="." method="_on_button_pdpa_topic_pressed"]

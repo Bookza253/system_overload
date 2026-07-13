@@ -5,7 +5,6 @@ extends Control
 func _ready():
 	# 🔌 เชื่อมต่อสัญญาณปุ่มหลัก
 	$VBoxContainer/TrainingButton.pressed.connect(_on_training_pressed)
-	$VBoxContainer/MixModeButton.pressed.connect(_on_mix_mode_pressed)
 	
 	# 🔌 เชื่อมต่อสัญญาณปุ่มย่อย (เช็กชื่อ Node ลูกใน VBoxContainer ให้ตรงนะครับ)
 	if $VBoxContainer/TrainingSubMenu.has_node("NetworkButton"):
@@ -42,14 +41,9 @@ func _on_button_router_topic_pressed():
 # 🌟 เลือกหัวข้อ VLAN -> ไปหน้า Desktop
 func _on_button_pdpa_topic_pressed():
 	Global.is_mix_mode = false
-	Global.selected_topic = "vlan" # ใช้ "vlan" ให้ตรงกับหน้า Desktop
+	Global.selected_topic = "vlan" 
 	_go_to_desktop()
 
-# 🔴 เลือกโหมดผสม -> ไปหน้า Desktop
-func _on_mix_mode_pressed():
-	Global.is_mix_mode = true
-	Global.selected_topic = "mix"
-	_go_to_desktop()
 
 # 🚀 ฟังก์ชันส่วนกลางสำหรับวาร์ปไปหน้า Desktop
 func _go_to_desktop():
