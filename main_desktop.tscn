@@ -6,6 +6,7 @@
 [ext_resource type="PackedScene" uid="uid://cnm2osc2jrxli" path="res://firewall_module.tscn" id="4_f4ip0"]
 [ext_resource type="PackedScene" uid="uid://cnsch1bd3k5mo" path="res://router_module.tscn" id="5_xjri4"]
 [ext_resource type="PackedScene" uid="uid://c6ykx7s1r1a48" path="res://pdpa_module.tscn" id="6_btvhs"]
+[ext_resource type="Texture2D" uid="uid://jukmxe8pt4aj" path="res://enter.png" id="7_f7fdd"]
 
 [node name="MainDesktop" type="Control" unique_id=1783687923]
 layout_mode = 3
@@ -26,7 +27,7 @@ color = Color(0.101960786, 0.16862746, 0.29803923, 1)
 
 [node name="ColorRect2" type="ColorRect" parent="." unique_id=1692232325]
 layout_mode = 0
-offset_top = 1048.0
+offset_top = 1025.0
 offset_right = 1920.0
 offset_bottom = 1080.0
 color = Color(0.11764706, 0.11764706, 0.11764706, 1)
@@ -47,38 +48,38 @@ visible = false
 layout_mode = 0
 offset_left = 3.0
 offset_top = 3.0
-offset_right = 71.0
-offset_bottom = 70.0
+offset_right = 73.0
+offset_bottom = 73.0
 icon = ExtResource("1_pyqms")
 expand_icon = true
 
 [node name="Button_Firewall" type="Button" parent="." unique_id=1017060860]
 visible = false
 layout_mode = 0
-offset_left = 2.0
+offset_left = 3.0
 offset_top = 76.0
-offset_right = 70.0
-offset_bottom = 143.0
+offset_right = 73.0
+offset_bottom = 146.0
 icon = ExtResource("1_pyqms")
 expand_icon = true
 
 [node name="Button_Router" type="Button" parent="." unique_id=875990078]
 visible = false
 layout_mode = 0
-offset_left = 2.0
-offset_top = 151.0
-offset_right = 70.0
-offset_bottom = 220.0
+offset_left = 3.0
+offset_top = 149.0
+offset_right = 73.0
+offset_bottom = 219.0
 icon = ExtResource("1_pyqms")
 expand_icon = true
 
 [node name="Button_PDPA" type="Button" parent="." unique_id=307648688]
 visible = false
 layout_mode = 0
-offset_left = 5.0
-offset_top = 225.0
-offset_right = 70.0
-offset_bottom = 294.0
+offset_left = 3.0
+offset_top = 222.0
+offset_right = 73.0
+offset_bottom = 292.0
 icon = ExtResource("1_pyqms")
 expand_icon = true
 
@@ -134,6 +135,15 @@ offset_top = 3.0
 offset_right = 2.0
 offset_bottom = 3.0
 
+[node name="Button_Logout" type="Button" parent="." unique_id=669620143]
+layout_mode = 0
+offset_left = 4.0
+offset_top = 953.0
+offset_right = 74.0
+offset_bottom = 1023.0
+icon = ExtResource("7_f7fdd")
+expand_icon = true
+
 [connection signal="pressed" from="Button_TaskManager_Mod" to="." method="_on_button_pressed"]
 [connection signal="pressed" from="Button_Firewall" to="." method="_on_button_firewall_pressed"]
 [connection signal="pressed" from="Button_Router" to="." method="_on_button_router_pressed"]
@@ -142,3 +152,4 @@ offset_bottom = 3.0
 [connection signal="close_requested" from="Window_TaskManager" to="." method="_on_window_task_manager_close_requested"]
 [connection signal="close_requested" from="Window_Firewall" to="." method="_on_window_firewall_close_requested"]
 [connection signal="close_requested" from="Window_VLAN" to="." method="_on_window_vlan_close_requested"]
+[connection signal="pressed" from="Button_Logout" to="." method="_on_button_logout_pressed"]

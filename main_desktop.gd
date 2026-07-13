@@ -32,7 +32,7 @@ func _ready():
 			"network":
 				_show_button("Button_Firewall")
 			"task_manager":
-				_show_button("Button_TaskManager_Mod") # 🎯 แก้เป็น _Mod
+				_show_button("Button_TaskManager_Mod")
 			"router":
 				_show_button("Button_Router")
 			"vlan":
@@ -40,7 +40,7 @@ func _ready():
 
 # ฟังก์ชันช่วยซ่อนปุ่มแบบปลอดภัย
 func _hide_all_desktop_buttons():
-	if has_node("Button_TaskManager_Mod"): $Button_TaskManager_Mod.hide() # 🎯 แก้เป็น _Mod
+	if has_node("Button_TaskManager_Mod"): $Button_TaskManager_Mod.hide()
 	if has_node("Button_Firewall"): $Button_Firewall.hide()
 	if has_node("Button_Router"): $Button_Router.hide()
 	if has_node("Button_PDPA"): $Button_PDPA.hide()
@@ -120,18 +120,44 @@ func _on_window_router_close_requested():
 	win_router.hide() 
 	if has_node("Window_Router/Router_Module"): 
 		$Window_Router/Router_Module.set_process(false)
+		
+	# 🟢 เปลี่ยนไอคอนด่าน Router ให้เป็นสีเขียว เพื่อบอกว่า "ด่านนี้ผ่านแล้วนะ"
+	if has_node("Button_Router"):
+		$Button_Router.modulate = Color(0.3, 1.0, 0.3)
 
 func _on_window_task_manager_close_requested() -> void:
 	win_task_manager.hide() 
 	if has_node("Window_TaskManager/TaskManager_Module"): 
 		$Window_TaskManager/TaskManager_Module.set_process(false)
+		
+	# 🟢 เปลี่ยนไอคอนด่าน Router ให้เป็นสีเขียว เพื่อบอกว่า "ด่านนี้ผ่านแล้วนะ"
+	if has_node("Button_Router"):
+		$Button_Router.modulate = Color(0.3, 1.0, 0.3)
 
 func _on_window_firewall_close_requested() -> void:
 	win_firewall.hide() 
 	if has_node("Window_Firewall/Firewall_Module"): 
 		$Window_Firewall/Firewall_Module.set_process(false)
+		
+	# 🟢 เปลี่ยนไอคอนด่าน Router ให้เป็นสีเขียว เพื่อบอกว่า "ด่านนี้ผ่านแล้วนะ"
+	if has_node("Button_Router"):
+		$Button_Router.modulate = Color(0.3, 1.0, 0.3)
 
 func _on_window_vlan_close_requested() -> void:
 	win_vlan.hide() 
 	if has_node("Window_VLAN/PDPA_Module"): 
 		$Window_VLAN/PDPA_Module.set_process(false)
+		
+	# 🟢 เปลี่ยนไอคอนด่าน Router ให้เป็นสีเขียว เพื่อบอกว่า "ด่านนี้ผ่านแล้วนะ"
+	if has_node("Button_Router"):
+		$Button_Router.modulate = Color(0.3, 1.0, 0.3)
+
+
+# 🖱️ ฟังก์ชันเมื่อคลิกปุ่มไอคอน Logout / ออกจากระบบ บนหน้าจอ Desktop
+func _on_button_logout_pressed() -> void:
+	# 🗑️ เคลียร์แต้มเคลียร์ด่านที่เก็บสะสมไว้ใน Global
+	if "completed_modules_count" in Global:
+		Global.completed_modules_count = 0
+		
+	# 🚀 วาร์ปกลับหน้าเลือกโหมดทันทีแบบสมูท
+	get_tree().change_scene_to_file("res://mode_selection.tscn")

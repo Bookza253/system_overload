@@ -32,6 +32,7 @@ layout_mode = 2
 text = "🟢 Training Mode"
 
 [node name="TrainingSubMenu" type="VBoxContainer" parent="VBoxContainer" unique_id=229880440]
+visible = false
 layout_mode = 2
 
 [node name="SystemButton" type="Button" parent="VBoxContainer/TrainingSubMenu" unique_id=459025182]
