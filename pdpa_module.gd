@@ -56,9 +56,9 @@ func setup_nat_challenge():
 func _print_prompt():
 	var prompt_text = ""
 	match current_cli_mode:
-		0: prompt_text = "Switch> "
-		1: prompt_text = "Switch# "
-		2: prompt_text = "Switch(config)# "
+		0: prompt_text = "Router> "
+		1: prompt_text = "Router# "
+		2: prompt_text = "Router(config)# "
 	
 	_append_to_terminal_safe(prompt_text)
 

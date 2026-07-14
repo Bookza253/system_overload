@@ -43,15 +43,15 @@ func setup_switch_challenge():
 	match selected:
 		"Marketing":
 			target_vlan = 10
-			target_port = "fa0/1"
+			target_port = "fa0/11"
 			target_ip = "192.168.1.99"
 		"Engineering":
 			target_vlan = 20
-			target_port = "fa0/2"
+			target_port = "fa0/25"
 			target_ip = "192.168.2.99"
 		"Guest_WiFi":
 			target_vlan = 30
-			target_port = "fa0/5"
+			target_port = "fa0/17"
 			target_ip = "192.168.3.77"
 			
 	if log_text_edit:
