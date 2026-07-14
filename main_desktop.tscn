@@ -1,13 +1,17 @@
 [gd_scene format=3 uid="uid://dgr42hxq62v5a"]
 
-[ext_resource type="Texture2D" uid="uid://ddxmxgyyfy8mn" path="res://icon.svg" id="1_pyqms"]
 [ext_resource type="Script" uid="uid://cqyrek2e5a23l" path="res://main_desktop.gd" id="1_xr4pk"]
 [ext_resource type="PackedScene" uid="uid://brfr3h82mx1pa" path="res://task_manager_module.tscn" id="2_xr4pk"]
+[ext_resource type="Texture2D" uid="uid://cegnvwxh5esfl" path="res://router.png" id="2_ydm8d"]
+[ext_resource type="Texture2D" uid="uid://l13prhhtl8y6" path="res://firewall (1).png" id="3_apmtd"]
+[ext_resource type="Texture2D" uid="uid://dfcfl6wwa7e6y" path="res://network-switch.png" id="4_1g7uv"]
 [ext_resource type="PackedScene" uid="uid://cnm2osc2jrxli" path="res://firewall_module.tscn" id="4_f4ip0"]
+[ext_resource type="Texture2D" uid="uid://tpp5gsgq84d8" path="res://transfer.png" id="5_rrfrb"]
 [ext_resource type="PackedScene" uid="uid://cnsch1bd3k5mo" path="res://router_module.tscn" id="5_xjri4"]
 [ext_resource type="PackedScene" uid="uid://c6ykx7s1r1a48" path="res://pdpa_module.tscn" id="6_btvhs"]
-[ext_resource type="Texture2D" uid="uid://jukmxe8pt4aj" path="res://enter.png" id="7_f7fdd"]
 [ext_resource type="Script" uid="uid://pry7sh8rye1m" path="res://Window_Terminal.gd" id="8_tn72c"]
+[ext_resource type="Texture2D" uid="uid://ddr2xxqvfxsaq" path="res://shutdown-icon-0.png" id="10_ydm8d"]
+[ext_resource type="Texture2D" uid="uid://4tshtgay74h3" path="res://document.png" id="11_apmtd"]
 
 [node name="MainDesktop" type="Control" unique_id=1783687923]
 layout_mode = 3
@@ -51,37 +55,37 @@ offset_left = 3.0
 offset_top = 3.0
 offset_right = 73.0
 offset_bottom = 73.0
-icon = ExtResource("1_pyqms")
+icon = ExtResource("2_ydm8d")
 expand_icon = true
 
 [node name="Button_Firewall" type="Button" parent="." unique_id=1017060860]
 visible = false
 layout_mode = 0
 offset_left = 3.0
-offset_top = 76.0
+offset_top = 3.0
 offset_right = 73.0
-offset_bottom = 146.0
-icon = ExtResource("1_pyqms")
+offset_bottom = 73.0
+icon = ExtResource("3_apmtd")
 expand_icon = true
 
 [node name="Button_Router" type="Button" parent="." unique_id=875990078]
 visible = false
 layout_mode = 0
 offset_left = 3.0
-offset_top = 149.0
+offset_top = 3.0
 offset_right = 73.0
-offset_bottom = 219.0
-icon = ExtResource("1_pyqms")
+offset_bottom = 73.0
+icon = ExtResource("4_1g7uv")
 expand_icon = true
 
 [node name="Button_PDPA" type="Button" parent="." unique_id=307648688]
 visible = false
 layout_mode = 0
 offset_left = 3.0
-offset_top = 222.0
+offset_top = 3.0
 offset_right = 73.0
-offset_bottom = 292.0
-icon = ExtResource("1_pyqms")
+offset_bottom = 73.0
+icon = ExtResource("5_rrfrb")
 expand_icon = true
 
 [node name="Window_Router" type="Window" parent="." unique_id=727529807]
@@ -138,21 +142,21 @@ offset_bottom = 3.0
 
 [node name="Button_Logout" type="Button" parent="." unique_id=669620143]
 layout_mode = 0
-offset_left = 4.0
-offset_top = 953.0
-offset_right = 74.0
-offset_bottom = 1023.0
-icon = ExtResource("7_f7fdd")
+offset_left = 2.0
+offset_top = 1025.0
+offset_right = 56.0
+offset_bottom = 1079.0
+icon = ExtResource("10_ydm8d")
 expand_icon = true
 
 [node name="Window_Terminal" type="Button" parent="." unique_id=275709142]
 visible = false
 layout_mode = 0
 offset_left = 3.0
-offset_top = 308.0
+offset_top = 76.0
 offset_right = 73.0
-offset_bottom = 378.0
-icon = ExtResource("1_pyqms")
+offset_bottom = 146.0
+icon = ExtResource("11_apmtd")
 expand_icon = true
 
 [node name="Popup_Terminal" type="Window" parent="." unique_id=273347381]
