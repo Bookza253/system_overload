@@ -12,7 +12,7 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_a3mlw")
 metadata/_edit_horizontal_guides_ = [539.0]
-metadata/_edit_vertical_guides_ = [961.0]
+metadata/_edit_vertical_guides_ = [626.0]
 
 [node name="TextureRect" type="TextureRect" parent="." unique_id=240012165]
 layout_mode = 0
