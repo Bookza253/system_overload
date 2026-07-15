@@ -2,7 +2,14 @@
 
 [ext_resource type="Script" uid="uid://b8nc7lhggfv3f" path="res://start_screen.gd" id="1_ncxyx"]
 [ext_resource type="Texture2D" uid="uid://1ly2clif0oxc" path="res://bootfix.png" id="2_afy8x"]
+[ext_resource type="Shader" uid="uid://b55nncvanwmea" path="res://start_screen.gdshader" id="2_k1na2"]
 [ext_resource type="Texture2D" uid="uid://bfj1u0scbyslg" path="res://SO.png" id="3_afy8x"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_vdywr"]
+shader = ExtResource("2_k1na2")
+shader_parameter/virtual_resolution = Vector2(640, 480)
+shader_parameter/grid_strength = 0.15
+shader_parameter/grid_scale = 1.0
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_afy8x"]
 
@@ -36,6 +43,13 @@ offset_bottom = 1080.0
 texture = ExtResource("2_afy8x")
 expand_mode = 1
 
+[node name="ShaderOverlay" type="ColorRect" parent="BootUI" unique_id=1177202557]
+material = SubResource("ShaderMaterial_vdywr")
+layout_mode = 0
+offset_right = 1920.0
+offset_bottom = 1080.0
+mouse_filter = 2
+
 [node name="SystemLogs" type="RichTextLabel" parent="BootUI" unique_id=1575516048]
 layout_mode = 0
 offset_left = 726.0
@@ -60,6 +74,13 @@ offset_right = 1920.0
 offset_bottom = 1080.0
 texture = ExtResource("3_afy8x")
 expand_mode = 1
+
+[node name="ShaderOverlay" type="ColorRect" parent="LoginUI" unique_id=2051430923]
+material = SubResource("ShaderMaterial_vdywr")
+layout_mode = 0
+offset_right = 1920.0
+offset_bottom = 1080.0
+mouse_filter = 2
 
 [node name="Button" type="Button" parent="LoginUI" unique_id=1229635458]
 layout_mode = 0

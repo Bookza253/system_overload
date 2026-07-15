@@ -26,6 +26,10 @@ func _ready():
 		log_text_edit.text = ""
 		
 	setup_route_challenge()
+	
+	# 🎹 เพิ่มบรรทัดนี้: เมื่อผู้เล่นพิมพ์ตัวหนังสือในช่อง LineEdit ให้เรียกฟังก์ชันทำเสียงพิมพ์
+	if command_input:
+		command_input.text_changed.connect(_on_line_edit_text_changed)
 
 func setup_route_challenge():
 	is_game_over = false
@@ -189,3 +193,18 @@ func _close_this_popup():
 
 func _on_panel_mouse_entered() -> void:
 	pass # Replace with function body.
+# ==============================================================================
+# 🔊 4. SFX SOUND CONTROLLER (ดึงเสียงตรงจาก AudioManager)
+# ==============================================================================
+
+# 🎹 ฟังก์ชันทำเสียงพิมพ์แกร๊ก ๆ
+func _on_line_edit_text_changed(_new_text: String):
+	if AudioManager and AudioManager.sfx_type:
+		AudioManager.sfx_type.play()
+
+# 🖱️ ฟังก์ชันดักจับเมาส์คลิกซ้ายบนหน้าต่างมินิเกมนี้ แล้วสั่งเล่นเสียงคลิก
+func _gui_input(event):
+	if event is InputEventMouseButton:
+		if event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
+			if AudioManager and AudioManager.sfx_click:
+				AudioManager.sfx_click.play()

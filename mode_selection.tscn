@@ -2,6 +2,13 @@
 
 [ext_resource type="Script" uid="uid://cpdb85003re3u" path="res://mode_selection.gd" id="1_a3mlw"]
 [ext_resource type="Texture2D" uid="uid://bfj1u0scbyslg" path="res://SO.png" id="2_ullqa"]
+[ext_resource type="Shader" uid="uid://4yqiwrmuq1mx" path="res://mode_selection.gdshader" id="3_ullqa"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_2f48w"]
+shader = ExtResource("3_ullqa")
+shader_parameter/virtual_resolution = Vector2(640, 480)
+shader_parameter/grid_strength = 0.15
+shader_parameter/grid_scale = 1.0
 
 [node name="ModeSelection" type="Control" unique_id=1208711110]
 layout_mode = 3
@@ -19,6 +26,13 @@ layout_mode = 0
 offset_right = 1920.0
 offset_bottom = 1080.0
 texture = ExtResource("2_ullqa")
+
+[node name="ShaderOverlay" type="ColorRect" parent="." unique_id=1809435775]
+material = SubResource("ShaderMaterial_2f48w")
+layout_mode = 0
+offset_right = 1920.0
+offset_bottom = 1080.0
+mouse_filter = 2
 
 [node name="VBoxContainer" type="VBoxContainer" parent="." unique_id=1238480260]
 layout_mode = 0

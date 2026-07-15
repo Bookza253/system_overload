@@ -1,5 +1,8 @@
 extends Control
 
+# 📢 เพิ่มบรรทัดนี้ที่ด้านบนสุดของไฟล์ router_module.gd ด้วยครับงับ!
+signal alert_status_changed(is_alert)
+
 # ==============================================================================
 # 🚨 1. ONREADY VARIABLES
 # ==============================================================================
@@ -28,6 +31,10 @@ func _ready():
 		log_text_edit.text = ""
 		
 	setup_switch_challenge()
+	
+	# 🎹 เพิ่มบรรทัดนี้: เมื่อผู้เล่นพิมพ์ตัวหนังสือในช่อง LineEdit ให้เรียกฟังก์ชันทำเสียงพิมพ์
+	if command_input:
+		command_input.text_changed.connect(_on_line_edit_text_changed)
 
 func setup_switch_challenge():
 	is_game_over = false
@@ -65,6 +72,9 @@ func setup_switch_challenge():
 
 	if command_input:
 		command_input.call_deferred("grab_focus")
+
+	# 🚨 ยิงสัญญาณเตือนภัยขอบแดงกะพริบทันทีเมื่อมินิเกมด่านนี้พร้อมรัน
+	emit_signal("alert_status_changed", true)
 
 # ฟังก์ชันพิมพ์สถานะโหมดเริ่มต้นของบรรทัด
 func _print_prompt():
@@ -210,9 +220,12 @@ func _scroll_to_bottom():
 		log_text_edit.scroll_vertical = log_text_edit.get_line_count()
 
 func _check_win_condition():
-	# 🌟 ปรับให้ตรวจสอบเงื่อนไขความพร้อมครบทุกข้อก่อนปิดหน้าต่างจบเกม
 	if current_vlan_configured and ping_success and step_ping_passed:
 		_print_to_terminal("\n🟢 SWITCH CONFIGURATION COMPLETE! NETWORK STABLE.")
+		
+		# ✅ ส่งสัญญาณบอกหน้าจอหลักว่า "แก้เสร็จแล้ว ดับขอบจอแดงได้!"
+		emit_signal("alert_status_changed", false)
+		
 		if "completed_modules_count" in Global:
 			Global.completed_modules_count += 1
 			
@@ -222,6 +235,10 @@ func _check_win_condition():
 func trigger_game_over(reason_text):
 	is_game_over = true
 	Global.game_over_reason = reason_text
+	
+	# 🚨 ดับขอบจอแดงก่อนที่ระบบจะย้ายซีนไปหน้า Blue Screen
+	emit_signal("alert_status_changed", false)
+	
 	get_tree().change_scene_to_file("res://blue_screen_scene.tscn")
 
 func _close_this_popup():
@@ -230,3 +247,19 @@ func _close_this_popup():
 		parent_node.hide()
 	else:
 		self.hide()
+
+# ==============================================================================
+# 🔊 4. SFX SOUND CONTROLLER (ดึงเสียงตรงจาก AudioManager)
+# ==============================================================================
+
+# 🎹 ฟังก์ชันทำเสียงพิมพ์แกร๊ก ๆ
+func _on_line_edit_text_changed(_new_text: String):
+	if AudioManager and AudioManager.sfx_type:
+		AudioManager.sfx_type.play()
+
+# 🖱️ ฟังก์ชันดักจับเมาส์คลิกซ้ายบนหน้าต่างมินิเกมนี้ แล้วสั่งเล่นเสียงคลิก
+func _gui_input(event):
+	if event is InputEventMouseButton:
+		if event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
+			if AudioManager and AudioManager.sfx_click:
+				AudioManager.sfx_click.play()

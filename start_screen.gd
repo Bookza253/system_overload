@@ -24,6 +24,8 @@ var log_steps = [
 func _ready():
 	boot_ui.show()
 	login_ui.hide()
+	# 🎶 สั่งเปิดเสียงแรกในหน้า Start (และจะดังต่อเนื่องยาวไปจนถึงหน้า Mode Selection เอง)
+	AudioManager.play_bg_sound("res://freesound_community-dark-server-76461.mp3")
 	
 	if system_logs:
 		system_logs.bbcode_enabled = true
