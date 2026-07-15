@@ -214,8 +214,8 @@ func _on_annoying_popup_closed(title: String, msg: String):
 	if AudioManager and AudioManager.sfx_click:
 		AudioManager.sfx_click.play()
 	
-	# ⏳ Async Delay Loop: พักหน้าจอไว้ 5.0 วินาทีตามข้อกำหนดก่อนเช็กเพื่อสร้างใหม่
-	await get_tree().create_timer(10.0).timeout
+	# ⏳ Async Delay Loop: พักหน้าจอไว้ 15.0 วินาทีตามข้อกำหนดก่อนเช็กเพื่อสร้างใหม่
+	await get_tree().create_timer(15.0).timeout
 	
 	# Guard Clause 2 (Double-Check): หยุดการสร้างหน้าต่างแบบสุ่มทันทีหากผู้เล่นกู้ระบบ (Save) ได้สำเร็จในเวลาดีเลย์
 	if not is_popup_enabled or ("completed_modules_count" in Global and Global.completed_modules_count > 0):

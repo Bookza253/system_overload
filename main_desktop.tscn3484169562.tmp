@@ -1,0 +1,230 @@
+[gd_scene format=3 uid="uid://dgr42hxq62v5a"]
+
+[ext_resource type="Script" uid="uid://cqyrek2e5a23l" path="res://main_desktop.gd" id="1_xr4pk"]
+[ext_resource type="PackedScene" uid="uid://brfr3h82mx1pa" path="res://task_manager_module.tscn" id="2_xr4pk"]
+[ext_resource type="Texture2D" uid="uid://cegnvwxh5esfl" path="res://router.png" id="2_ydm8d"]
+[ext_resource type="Texture2D" uid="uid://l13prhhtl8y6" path="res://firewall (1).png" id="3_apmtd"]
+[ext_resource type="Texture2D" uid="uid://dfcfl6wwa7e6y" path="res://network-switch.png" id="4_1g7uv"]
+[ext_resource type="PackedScene" uid="uid://cnm2osc2jrxli" path="res://firewall_module.tscn" id="4_f4ip0"]
+[ext_resource type="Texture2D" uid="uid://tpp5gsgq84d8" path="res://transfer.png" id="5_rrfrb"]
+[ext_resource type="PackedScene" uid="uid://cnsch1bd3k5mo" path="res://router_module.tscn" id="5_xjri4"]
+[ext_resource type="PackedScene" uid="uid://c6ykx7s1r1a48" path="res://pdpa_module.tscn" id="6_btvhs"]
+[ext_resource type="Script" uid="uid://pry7sh8rye1m" path="res://Window_Terminal.gd" id="8_tn72c"]
+[ext_resource type="Texture2D" uid="uid://ddr2xxqvfxsaq" path="res://shutdown-icon-0.png" id="10_ydm8d"]
+[ext_resource type="Texture2D" uid="uid://4tshtgay74h3" path="res://document.png" id="11_apmtd"]
+[ext_resource type="Shader" uid="uid://c5x8w4giex0c4" path="res://main_desktop.gdshader" id="13_apmtd"]
+[ext_resource type="Shader" uid="uid://cxqxs14yl7g6v" path="res://red_alert.gdshader" id="14_1g7uv"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_1g7uv"]
+shader = ExtResource("13_apmtd")
+shader_parameter/virtual_resolution = Vector2(640, 480)
+shader_parameter/grid_strength = 0.15
+shader_parameter/grid_scale = 1.0
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_rrfrb"]
+shader = ExtResource("14_1g7uv")
+shader_parameter/alert_color = Color(1, 0, 0, 0.5)
+shader_parameter/frequency = 1.0
+shader_parameter/min_alpha = 0.0
+shader_parameter/max_alpha = 0.4
+shader_parameter/border_size = 0.1
+
+[node name="MainDesktop" type="Control" unique_id=1783687923]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_xr4pk")
+metadata/_edit_horizontal_guides_ = [-23.0]
+metadata/_edit_vertical_guides_ = [-118.0]
+
+[node name="SubViewportContainer" type="SubViewportContainer" parent="." unique_id=90446577]
+layout_mode = 0
+offset_right = 1920.0
+offset_bottom = 1080.0
+
+[node name="SubViewport" type="SubViewport" parent="SubViewportContainer" unique_id=201901775]
+handle_input_locally = false
+size = Vector2i(1920, 1080)
+render_target_update_mode = 4
+
+[node name="ColorRect" type="ColorRect" parent="SubViewportContainer/SubViewport" unique_id=1718778005]
+offset_right = 1920.0
+offset_bottom = 1080.0
+color = Color(0.101960786, 0.16862746, 0.29803923, 1)
+
+[node name="ColorRect2" type="ColorRect" parent="SubViewportContainer/SubViewport" unique_id=1692232325]
+offset_top = 1025.0
+offset_right = 1920.0
+offset_bottom = 1080.0
+color = Color(0.11764706, 0.11764706, 0.11764706, 1)
+
+[node name="Label" type="Label" parent="SubViewportContainer/SubViewport" unique_id=2039212124]
+offset_left = 678.0
+offset_top = 495.0
+offset_right = 1238.0
+offset_bottom = 578.0
+theme_override_font_sizes/font_size = 60
+text = "SYSTEM OVERLOAD"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Button_TaskManager_Mod" type="Button" parent="SubViewportContainer/SubViewport" unique_id=802173448]
+visible = false
+offset_left = 3.0
+offset_top = 3.0
+offset_right = 73.0
+offset_bottom = 73.0
+icon = ExtResource("2_ydm8d")
+expand_icon = true
+
+[node name="Button_Firewall" type="Button" parent="SubViewportContainer/SubViewport" unique_id=1017060860]
+visible = false
+offset_left = 3.0
+offset_top = 3.0
+offset_right = 73.0
+offset_bottom = 73.0
+icon = ExtResource("3_apmtd")
+expand_icon = true
+
+[node name="Button_Router" type="Button" parent="SubViewportContainer/SubViewport" unique_id=875990078]
+visible = false
+offset_left = 3.0
+offset_top = 3.0
+offset_right = 73.0
+offset_bottom = 73.0
+icon = ExtResource("4_1g7uv")
+expand_icon = true
+
+[node name="Button_PDPA" type="Button" parent="SubViewportContainer/SubViewport" unique_id=307648688]
+visible = false
+offset_left = 3.0
+offset_top = 3.0
+offset_right = 73.0
+offset_bottom = 73.0
+icon = ExtResource("5_rrfrb")
+expand_icon = true
+
+[node name="Window_Router" type="Window" parent="SubViewportContainer/SubViewport" unique_id=727529807]
+oversampling_override = 1.0
+initial_position = 2
+size = Vector2i(800, 600)
+visible = false
+
+[node name="Router_Module" parent="SubViewportContainer/SubViewport/Window_Router" unique_id=269885670 instance=ExtResource("5_xjri4")]
+offset_left = -1.0
+offset_top = -2.0
+offset_right = -1.0
+offset_bottom = -2.0
+
+[node name="Window_TaskManager" type="Window" parent="SubViewportContainer/SubViewport" unique_id=725908218]
+oversampling_override = 1.0
+initial_position = 2
+size = Vector2i(800, 600)
+visible = false
+
+[node name="TaskManager_Module" parent="SubViewportContainer/SubViewport/Window_TaskManager" unique_id=130243921 instance=ExtResource("2_xr4pk")]
+offset_left = -1.0
+offset_top = -20.0
+offset_right = -1.0
+offset_bottom = -20.0
+
+[node name="Window_Firewall" type="Window" parent="SubViewportContainer/SubViewport" unique_id=1620434941]
+oversampling_override = 1.0
+initial_position = 2
+size = Vector2i(800, 600)
+visible = false
+
+[node name="Firewall_Module" parent="SubViewportContainer/SubViewport/Window_Firewall" unique_id=483616568 instance=ExtResource("4_f4ip0")]
+offset_left = 1.0
+offset_top = 1.0
+offset_right = 1.0
+offset_bottom = 1.0
+
+[node name="Window_VLAN" type="Window" parent="SubViewportContainer/SubViewport" unique_id=1728370338]
+oversampling_override = 1.0
+initial_position = 2
+size = Vector2i(800, 600)
+visible = false
+
+[node name="PDPA_Module" parent="SubViewportContainer/SubViewport/Window_VLAN" unique_id=771819813 instance=ExtResource("6_btvhs")]
+offset_left = 2.0
+offset_top = 3.0
+offset_right = 2.0
+offset_bottom = 3.0
+
+[node name="Button_Logout" type="Button" parent="SubViewportContainer/SubViewport" unique_id=669620143]
+offset_left = 2.0
+offset_top = 1025.0
+offset_right = 56.0
+offset_bottom = 1079.0
+icon = ExtResource("10_ydm8d")
+expand_icon = true
+
+[node name="Window_Terminal" type="Button" parent="SubViewportContainer/SubViewport" unique_id=275709142]
+visible = false
+offset_left = 3.0
+offset_top = 76.0
+offset_right = 73.0
+offset_bottom = 146.0
+icon = ExtResource("11_apmtd")
+expand_icon = true
+
+[node name="Popup_Terminal" type="Window" parent="SubViewportContainer/SubViewport" unique_id=273347381]
+oversampling_override = 1.0
+initial_position = 2
+size = Vector2i(800, 600)
+visible = false
+transient = true
+
+[node name="Terminal_Module" type="Control" parent="SubViewportContainer/SubViewport/Popup_Terminal" unique_id=22219040]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("8_tn72c")
+
+[node name="Label_Info" type="Label" parent="SubViewportContainer/SubViewport/Popup_Terminal/Terminal_Module" unique_id=2019076884]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -387.0
+offset_top = -298.5
+offset_right = 387.0
+offset_bottom = 298.5
+grow_horizontal = 2
+grow_vertical = 2
+autowrap_mode = 2
+
+[node name="ShaderOverlay" type="ColorRect" parent="." unique_id=392743381]
+material = SubResource("ShaderMaterial_1g7uv")
+layout_mode = 0
+offset_right = 1920.0
+offset_bottom = 1080.0
+mouse_filter = 2
+
+[node name="RedAlertOverlay" type="ColorRect" parent="." unique_id=783649039]
+material = SubResource("ShaderMaterial_rrfrb")
+layout_mode = 0
+offset_right = 1920.0
+offset_bottom = 1080.0
+mouse_filter = 2
+
+[connection signal="pressed" from="SubViewportContainer/SubViewport/Button_TaskManager_Mod" to="." method="_on_button_pressed"]
+[connection signal="pressed" from="SubViewportContainer/SubViewport/Button_Firewall" to="." method="_on_button_firewall_pressed"]
+[connection signal="pressed" from="SubViewportContainer/SubViewport/Button_Router" to="." method="_on_button_router_pressed"]
+[connection signal="pressed" from="SubViewportContainer/SubViewport/Button_PDPA" to="." method="_on_button_pdpa_pressed"]
+[connection signal="close_requested" from="SubViewportContainer/SubViewport/Window_Router" to="." method="_on_window_router_close_requested"]
+[connection signal="close_requested" from="SubViewportContainer/SubViewport/Window_TaskManager" to="." method="_on_window_task_manager_close_requested"]
+[connection signal="close_requested" from="SubViewportContainer/SubViewport/Window_Firewall" to="." method="_on_window_firewall_close_requested"]
+[connection signal="close_requested" from="SubViewportContainer/SubViewport/Window_VLAN" to="." method="_on_window_vlan_close_requested"]
+[connection signal="pressed" from="SubViewportContainer/SubViewport/Button_Logout" to="." method="_on_button_logout_pressed"]
+[connection signal="pressed" from="SubViewportContainer/SubViewport/Window_Terminal" to="." method="_on_window_terminal_pressed"]
+[connection signal="close_requested" from="SubViewportContainer/SubViewport/Popup_Terminal" to="." method="_on_popup_terminal_close_requested"]

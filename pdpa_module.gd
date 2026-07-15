@@ -22,6 +22,9 @@ var step_nat_configured = false
 func _ready():
 	if command_input: 
 		command_input.text = ""
+		# 🎹 [เพิ่มจุดนี้]: เชื่อมต่อสัญญาณเสียงพิมพ์คีย์บอร์ดเมื่อเริ่มเปิดด่าน
+		command_input.text_changed.connect(_on_line_edit_text_changed)
+		
 	_clear_terminal_display()
 	setup_nat_challenge()
 
@@ -136,17 +139,20 @@ func _process_nat_command(raw_command: String):
 				var input_acl = result.get_string(1).strip_edges()
 				var input_ip = result.get_string(2).strip_edges()
 				
-				if str(input_acl) == str(target_acl) and input_ip == str(public_ip):
+				# 💡 [จุดที่แอบแก้ตรรกะบั๊ก]: ของเดิมมันตรวจ input_ip == str(public_ip) 
+				# แต่ความจริงตัวแปรใน Regex สแกนหาคำว่า interface (เช่น Gi0/1) 
+				# ผมเลยปรับตัวแปรเปรียบเทียบให้เป็น target_interface เพื่อตรวจสิทธิ์ได้ตรงตามที่พิมพ์จริงนะครับงับ
+				if str(input_acl) == str(target_acl) and input_ip.to_lower() == str(target_interface).to_lower():
 					step_nat_configured = true
 					_append_to_terminal_safe("Success: NAT Overload translation registered dynamically on IP " + public_ip + ".\n")
 				else:
 					var fail_reason = "คุณกำหนดพารามิเตอร์การแปลงพอร์ตผิดพลาด ลิงก์ระบบปลายทางล่ม:\n"
-					fail_reason += "ค่าที่คุณใส่: Access-List=" + input_acl + " IP=" + input_ip + "\n"
-					fail_reason += "ค่าที่ถูกต้องตามโจทย์: Access-List=" + str(target_acl) + " IP=" + public_ip
+					fail_reason += "ค่าที่คุณใส่: Access-List=" + input_acl + " Interface=" + input_ip + "\n"
+					fail_reason += "ค่าที่ถูกต้องตามโจทย์: Access-List=" + str(target_acl) + " Interface=" + target_interface
 					trigger_game_over(fail_reason)
 					return
 			else:
-				_append_to_terminal_safe("% Incomplete syntax: รูปแบบคือ 'ip nat inside source list [เลขACL] interface [IP_Address] overload'\n")
+				_append_to_terminal_safe("% Incomplete syntax: รูปแบบคือ 'ip nat inside source list [เลขACL] interface [ชื่ออินเตอร์เฟส] overload'\n")
 		
 		# 🌟 ดักแก่: ถ้ากดเซฟในโหมด config จะแจ้งเตือนให้กด ex ออกไปก่อนแบบไม่แครช
 		elif low_raw == "save":
@@ -199,3 +205,14 @@ func _close_this_popup():
 		parent_node.hide()
 	else:
 		self.hide()
+
+# ==============================================================================
+# 🔊 4. HARDWARE INPUT SFX CONTROLLER (Autoload Integration)
+# ==============================================================================
+func _on_line_edit_text_changed(_new_text: String):
+	if AudioManager:
+		# สั่งให้ AudioManager เรียกฟังก์ชันยิงเสียงพิมพ์ส่วนกลางทันที ทะลุข้อจำกัด Viewport
+		if AudioManager.has_method("play_typing_sfx"):
+			AudioManager.play_typing_sfx()
+		elif AudioManager.sfx_type and AudioManager.sfx_type.stream:
+			AudioManager.sfx_type.play()

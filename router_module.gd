@@ -118,11 +118,13 @@ func _on_line_edit_ip_text_submitted(new_text: String) -> void:
 	
 	# จำลองความหน่วงการประมวลผลคำสั่งของอุปกรณ์สวิตช์จริง (Execution Latency Simulation)
 	await get_tree().create_timer(0.1).timeout
+	
 	_process_cli_command(raw_command)
 
 	if command_input:
 		command_input.call_deferred("grab_focus") # 🟢 บังคับล็อกโฟกัสป้องกันการหลุดฟอร์มหลังประมวลผลเสร็จ
 
+# 
 # ==============================================================================
 # CLI COMMAND PROCESSING (VLAN PORT ASSIGNMENT & ICMP PING CHECK)
 # - ตรรกะคัดกรองระดับสิทธิ์คำสั่ง Cisco CLI (Switch Authorization Level Parsing)
@@ -273,6 +275,7 @@ func _close_this_popup():
 # ==============================================================================
 # 🔊 4. HARDWARE INPUT SFX CONTROLLER (Autoload Integration)
 # ==============================================================================
+
 func _on_line_edit_text_changed(_new_text: String):
 	if AudioManager and AudioManager.sfx_type:
 		AudioManager.sfx_type.play()
