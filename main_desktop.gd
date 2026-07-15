@@ -83,7 +83,7 @@ func _ready():
 		router_module.connect("alert_status_changed", _on_minigame_alert_status_changed)
 
 	# สั่งรันหน้าต่างจำลองสถานการณ์ขัดข้องเริ่มต้น
-	spawn_annoying_popup("SYSTEM ERROR 404", "พบข้อผิดพลาดร้ายแรงมั้งนะ?")
+	spawn_annoying_popup("SYSTEM ERROR 404", "พบข้อผิดพลาด!!")
 
 func _hide_all_desktop_buttons():
 	if btn_task_manager: btn_task_manager.hide()
