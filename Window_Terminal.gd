@@ -1,107 +1,192 @@
 extends Control
 
 # ==============================================================================
-# 🚨 1. NODE REFERENCES & STATE VARIABLES
-# - info_label: อ้างอิงโหนด Label สำหรับเรนเดอร์ข้อความคู่มือ (Cheat Sheet)
+# 🚨 1. ONREADY VARIABLES
 # ==============================================================================
-var info_label: Label = null
+@onready var log_text_edit = $Panel/TextEdit_Log if has_node("Panel/TextEdit_Log") else null 
+@onready var command_input = $Panel/LineEdit_IP if has_node("Panel/LineEdit_IP") else null 
+
+# ข้อมูล Scenario เครือข่ายปลายทางที่ขาดหายไป
+var destination_name = ""
+var target_network = ""
+var target_mask = ""
+var target_next_hop = ""
+
+var is_game_over = false  
+var current_cli_mode = 0 # 0: User, 1: Privileged, 2: Config Mode
+var step_route_added = false
 
 # ==============================================================================
-# ⚙️ 2. LIFE CYCLE & SIGNAL BINDING
-# - _ready: ทำงานครั้งแรกเมื่อโหลดซีน และดักจับ Event การเปลี่ยนสถานะการมองเห็น
-# - _process: อัปเดตข้อมูลแบบ Real-time เมื่อหน้าต่างถูกเปิดใช้งาน (UI Polling)
+# ⚙️ 2. MAIN SIMULATOR SYSTEM
 # ==============================================================================
 func _ready():
-	update_cheat_sheet_info()
-	visibility_changed.connect(update_cheat_sheet_info)
-
-func _process(_delta):
-	# Optimization: สั่งอัปเดตข้อมูลเฉพาะตอนที่หน้าต่างนี้ถูกแสดงผลอยู่เท่านั้นเพื่อประหยัด CPU
-	if is_visible_in_tree():
-		update_cheat_sheet_info()
-
-# ==============================================================================
-# 🧠 3. CONTEXT-AWARE DATA RENDERING (Dynamic Topic Detection)
-# - ดึง State จาก Global Singleton เพื่อตรวจสอบโหมดปัจจุบันที่ผู้เล่นกำลังรันอยู่
-# - สลับชุดข้อมูลคู่มือ (Data Mapping) ให้ตรงกับมินิเกมโดยอัตโนมัติ
-# ==============================================================================
-func update_cheat_sheet_info():
-	# Lazy Initialization: ดึงโหนดเป้าหมายเฉพาะเมื่อยังไม่เคยดึง (Memory Optimization)
-	if not info_label:
-		info_label = get_node_or_null("Label_Info") as Label
+	if command_input: 
+		command_input.text = ""
+	if log_text_edit:
+		log_text_edit.text = ""
 		
-	if not info_label:
-		return
+	setup_route_challenge()
 
-	var text_display = "=== 📋 NETWORK INFO CHEAT SHEET ===\n\n"
+func setup_route_challenge():
+	is_game_over = false
+	current_cli_mode = 0 
+	step_route_added = false
 	
-	# State Extraction: ดึงค่า Topic จาก Global และ Normalization ให้อยู่ในรูปตัวพิมพ์เล็กทั้งหมด
-	var current_topic = ""
-	if "selected_topic" in Global and Global.selected_topic != null:
-		current_topic = str(Global.selected_topic).to_lower()
+	if command_input: 
+		command_input.text = ""
+		
+	# สุ่มเลือก Scenario เส้นทางเน็ตเวิร์กที่ล่ม
+	var scenarios = [
+		{"dest": "HQ_Server", "net": "192.168.55.0", "mask": "255.255.255.0", "next": "192.168.1.1"},
+		{"dest": "Branch_Office", "net": "192.168.50.0", "mask": "255.255.255.0", "next": "192.168.2.55"},
+		{"dest": "Cloud_Storage", "net": "192.168.71.0", "mask": "255.255.255.0", "next": "192.168.10.254"}
+	]
+	
+	var selected = scenarios[randi() % scenarios.size()]
+	destination_name = selected["dest"]
+	target_network = selected["net"]
+	target_mask = selected["mask"]
+	target_next_hop = selected["next"]
+	
+	if log_text_edit:
+		log_text_edit.text = "--- ROUTING ---\n"
+		log_text_edit.text += "⚠️ ALERT: Connection to [" + destination_name + "] is DOWN! (No Route to Host)\n"
+		_print_prompt()
+		
+	if command_input:
+		command_input.call_deferred("grab_focus")
 
-	# --------------------------------------------------------------------------
-	# 🌐 1. NAT OVERLOAD MODULE (โหมด Task Manager / System)
-	# --------------------------------------------------------------------------
-	if current_topic == "task_manager" or current_topic == "system":
-		text_display += "📍 [ข้อมูลการตั้งค่าโครงสร้างด่าน NAT OVERLOAD]\n\n"
-		text_display += "▪️ Port: Gi0/1 | ACL: 1 | IP: 192.168.1.50\n\n"
-		text_display += "▪️ Port: Gi0/2 | ACL: 5 | IP: 192.168.2.10\n\n"
-		text_display += "▪️ Port: fa0/1 | ACL: 10 | IP: 192.168.3.99\n\n"
-		text_display += "━━━━━━━━━━━━━━━━━━━━━━━━\n"
-		text_display += "💡 ตรวจสอบพอร์ตเชื่อมต่อจากหน้าจอแจ้งเตือนหลัก\n"
-		text_display += "ℹ️ อย่าลืมพิมพ์ save ทุกครั้งหลังตั้งค่าสำเร็จ"
+func _print_prompt():
+	if not log_text_edit: return
+	match current_cli_mode:
+		0: log_text_edit.text += "Router> "
+		1: log_text_edit.text += "Router# "
+		2: log_text_edit.text += "Router(config)# "
+	_scroll_to_bottom()
 
-	# --------------------------------------------------------------------------
-	# 🛡️ 2. FIREWALL ACCESS-LIST MODULE (โหมด Network / Firewall)
-	# --------------------------------------------------------------------------
-	elif current_topic == "network" or current_topic == "firewall":
-		text_display += "📍 [รายชื่อแผนกและ IP เป้าหมายในด่าน FIREWALL]\n\n"
-		text_display += "▪️ แผนก: Accounting\n  IP Address: 192.168.1.50\n\n"
-		text_display += "▪️ แผนก: HR\n  IP Address: 192.168.2.10\n\n"
-		text_display += "▪️ แผนก: Marketing\n  IP Address: 192.168.3.99\n\n"
-		text_display += "▪️ แผนก: R&D\n  IP Address: 192.168.4.25\n\n"
-		text_display += "━━━━━━━━━━━━━━━━━━━━━━━━\n"
-		text_display += "💡 ตรวจสอบหน้าจอแจ้งเตือนแอปหลักว่าแผนกใดถูกโจมตี\n"
-		text_display += "ℹ️ อย่าลืมพิมพ์ save ทุกครั้งหลังตั้งค่าสำเร็จ"
+func _on_line_edit_ip_text_submitted(new_text: String) -> void:
+	if is_game_over or not is_visible_in_tree(): return
+	
+	var raw_command = new_text.strip_edges()
+	if command_input: 
+		command_input.text = "" 
+		
+	if raw_command == "": 
+		_print_to_terminal("")
+		_print_prompt()
+		if command_input: 
+			command_input.call_deferred("grab_focus")
+		return
+		
+	if log_text_edit:
+		log_text_edit.text += raw_command + "\n"
+		
+	await get_tree().create_timer(0.1).timeout
+	_process_router_command(raw_command)
+	
+	if command_input:
+		command_input.call_deferred("grab_focus")
 
-	# --------------------------------------------------------------------------
-	# 📶 3. STATIC ROUTE MODULE (โหมด Router)
-	# --------------------------------------------------------------------------
-	elif current_topic == "router":
-		text_display += "📍 [ตารางเส้นทางเครือข่ายด่าน STATIC ROUTE]\n\n"
-		text_display += "▪️ ปลายทาง: HQ_Server\n"
-		text_display += "  Network: 192.168.55.0 | Mask: 255.255.255.0 | Next-Hop: 192.168.1.1\n\n"
-		text_display += "▪️ ปลายทาง: Branch_Office\n"
-		text_display += "  Network: 192.168.50.0 | Mask: 255.255.255.0 | Next-Hop: 192.168.2.55\n\n"
-		text_display += "▪️ ปลายทาง: Cloud_Storage\n"
-		text_display += "  Network: 192.168.71.0 | Mask: 255.255.255.0 | Next-Hop: 192.168.10.254\n\n"
-		text_display += "━━━━━━━━━━━━━━━━━━━━━━━━\n"
-		text_display += "💡 ตรวจสอบชื่อปลายทางเครือข่ายที่ล่มจากหน้าจอหลัก\n"
-		text_display += "ℹ️ อย่าลืมพิมพ์ save ทุกครั้งหลังตั้งค่าสำเร็จ"
+# ==============================================================================
+# 🎮 CLI COMMAND PROCESSING (IP ROUTE SYSTEM)
+# ==============================================================================
+func _process_router_command(raw_command: String):
+	
+	# 🟩 โหมดที่ 0: User Mode
+	if current_cli_mode == 0:
+		if raw_command == "enable":
+			current_cli_mode = 1
+		elif raw_command == "conf t" or raw_command.begins_with("ip route") or raw_command == "exit" or raw_command == "ex" or raw_command == "save":
+			_print_to_terminal("% Command rejected: ต้องกรอกคำสั่ง 'enable' เพื่อเข้าสิทธิ์แอดมินก่อน")
+		else:
+			_print_to_terminal("% Unknown command. (พิมพ์ 'enable' เพื่อเริ่มต้น)")
 
-	# --------------------------------------------------------------------------
-	# 🌟 4. VLAN SEGMENTATION MODULE (โหมด VLAN / PDPA)
-	# --------------------------------------------------------------------------
-	elif current_topic == "vlan" or current_topic == "pdpa":
-		text_display += "📍 [ข้อมูลพอร์ตและหมายเลข VLAN ในด่าน SWITCH]\n\n"
-		text_display += "▪️ แผนก: Marketing\n"
-		text_display += "  VLAN: 10 | Port: fa0/11 | IP: 192.168.1.99\n\n"
-		text_display += "▪️ แผนก: Engineering\n"
-		text_display += "  VLAN: 20 | Port: fa0/25 | IP: 192.168.2.99\n\n"
-		text_display += "▪️ แผนก: Guest_WiFi\n"
-		text_display += "  VLAN: 30 | Port: fa0/17 | IP: 192.168.3.77\n\n" 
-		text_display += "━━━━━━━━━━━━━━━━━━━━━━━━\n"
-		text_display += "💡 ตรวจสอบชื่อแผนกที่มีปัญหา VLAN Mismatch จากหน้าจอหลัก\n"
-		text_display += "ℹ️ อย่าลืมพิมพ์ save ทุกครั้งหลังทดสอบ Ping สำเร็จ"
+	# 🟩 โหมดที่ 1: Privileged EXEC Mode
+	elif current_cli_mode == 1:
+		if raw_command == "configure terminal" or raw_command == "conf t":
+			current_cli_mode = 2
+			_print_to_terminal("Enter configuration commands, one per line. End with 'exit' or 'ex'.")
+		elif raw_command == "save":
+			if step_route_added:
+				_print_to_terminal("\n🛡️ STATUS: STATIC ROUTE ACTIVATED! ROUTE TO " + destination_name + " IS ONLINE.")
+				_print_to_terminal("🟢 RUNNING CONFIGURATION SUCCESSFULLY SAVED.")
+				_check_win_condition()
+				if is_game_over: return
+			else:
+				_print_to_terminal("% Command rejected: เครือข่ายยังล่มอยู่! กรุณาเข้าไปตั้งค่าเส้นทางก่อน")
+		elif raw_command == "exit" or raw_command == "ex":
+			_print_to_terminal("% Connection closed.")
+		else:
+			_print_to_terminal("% Unknown command. (พิมพ์ 'conf t' เพื่อเข้าโหมดคอนฟิก หรือ 'save' เพื่อบันทึก)")
 
-	# --------------------------------------------------------------------------
-	# 🔒 5. FALLBACK / ERROR STATE (โหมดสำรองกันข้อผิดพลาด)
-	# --------------------------------------------------------------------------
+	# 🟩 โหมดที่ 2: Global Configuration Mode
+	elif current_cli_mode == 2:
+		
+		# 🛑 ตรวจสอบคำสั่งตั้งค่าเส้นทาง ip route
+		if raw_command.begins_with("ip route "):
+			var route_args = raw_command.replace("ip route ", "").strip_edges()
+			var parts = route_args.split(" ", false)
+			
+			if parts.size() == 3:
+				var input_net = parts[0]
+				var input_mask = parts[1]
+				var input_next = parts[2]
+				
+				if input_net == target_network and input_mask == target_mask and input_next == target_next_hop:
+					step_route_added = true
+					_print_to_terminal("Success: Static route added to routing table. Packet delivery test passed.")
+					
+				else:
+					var fail_reason = "คุณป้อนพารามิเตอร์เส้นทางผิดพลาด! ข้อมูลไม่แมตช์กับเครือข่ายปลายทาง:\n"
+					fail_reason += "ค่าที่คุณใส่: Net=" + input_net + " Mask=" + input_mask + " Next-Hop=" + input_next
+					trigger_game_over(fail_reason)
+					return
+			else:
+				_print_to_terminal("% Incomplete command: รูปแบบต้องเป็น 'ip route [Network] [Subnet_Mask] [Next_Hop]'")
+		
+		elif raw_command == "save":
+			_print_to_terminal("% Command rejected: กรุณาพิมพ์ 'ex' ออกจากโหมดคอนฟิกก่อนจึงจะเซฟได้")
+				
+		elif raw_command == "exit" or raw_command == "ex": 
+			current_cli_mode = 1
+			_print_to_terminal("Leaving Configuration Mode.")
+		else:
+			_print_to_terminal("% Invalid syntax. (คำสั่งที่รองรับในโหมดนี้: 'ip route [Network] [Mask] [Next_Hop]', 'ex')")
+
+	_print_prompt()
+
+# ==============================================================================
+# 🎯 3. SUB SYSTEMS
+# ==============================================================================
+func _print_to_terminal(text: String):
+	if log_text_edit:
+		log_text_edit.text += text + "\n"
+		_scroll_to_bottom()
+
+func _scroll_to_bottom():
+	if log_text_edit:
+		log_text_edit.scroll_vertical = log_text_edit.get_line_count()
+
+func _check_win_condition():
+	is_game_over = true
+	if "completed_modules_count" in Global:
+		Global.completed_modules_count += 1
+		
+	await get_tree().create_timer(1.5).timeout
+	_close_this_popup()
+
+func trigger_game_over(reason_text):
+	is_game_over = true
+	Global.game_over_reason = "❌ ROUTING TABLE INVERSION\n" + reason_text
+	get_tree().change_scene_to_file("res://blue_screen_scene.tscn")
+
+func _close_this_popup():
+	var parent_node = get_parent()
+	if parent_node and (parent_node is Window or parent_node.name.begins_with("Window")):
+		parent_node.hide()
 	else:
-		text_display += "📍 [System Error: ไม่พบการเชื่อมโยงข้อมูล Data Mapping]\n\n"
-		text_display += "🔎 ค่าสถานะ Global.selected_topic ล่าสุด: \"" + str(current_topic) + "\"\n\n"
-		text_display += "💡 ข้อมูลไม่ตรงกับเงื่อนไข Configuration ใด ๆ กรุณาตรวจสอบการตั้งค่า Scene Transition"
+		self.hide()
 
-	# UI Update Render
-	info_label.text = text_display
+
+func _on_panel_mouse_entered() -> void:
+	pass # Replace with function body.
