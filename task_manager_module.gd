@@ -51,7 +51,6 @@ func setup_route_challenge():
 	if log_text_edit:
 		log_text_edit.text = "--- ROUTING ---\n"
 		log_text_edit.text += "⚠️ ALERT: Connection to [" + destination_name + "] is DOWN! (No Route to Host)\n"
-		log_text_edit.text += "Required Path: Network: " + target_network + " | Mask: " + target_mask + " | Next-Hop: " + target_next_hop + "\n"
 		_print_prompt()
 		
 	if command_input:
@@ -60,9 +59,9 @@ func setup_route_challenge():
 func _print_prompt():
 	if not log_text_edit: return
 	match current_cli_mode:
-		0: log_text_edit.text += "Switch> "
-		1: log_text_edit.text += "Switch# "
-		2: log_text_edit.text += "Switch(config)# "
+		0: log_text_edit.text += "Router> "
+		1: log_text_edit.text += "Router# "
+		2: log_text_edit.text += "Router(config)# "
 	_scroll_to_bottom()
 
 func _on_line_edit_ip_text_submitted(new_text: String) -> void:

@@ -56,9 +56,9 @@ func setup_firewall_challenge():
 func _print_prompt():
 	if not log_text_edit: return
 	match current_cli_mode:
-		0: log_text_edit.text += "Switch> "
-		1: log_text_edit.text += "Switch# "
-		2: log_text_edit.text += "Switch(config)# "
+		0: log_text_edit.text += "Router> "
+		1: log_text_edit.text += "Router# "
+		2: log_text_edit.text += "Router(config)# "
 	_scroll_to_bottom()
 
 func _on_line_edit_ip_text_submitted(new_text: String) -> void:
@@ -132,7 +132,7 @@ func _process_firewall_command(raw_command: String):
 		
 		# ดักกรณีพิมพ์สั้นไป หรือพิมพ์ผิดรูปแบบ
 		elif raw_command.begins_with("deny ip "):
-			_print_to_terminal("% Invalid command: ในโหมดเลเยอร์นี้ ต้องระบุกลุ่มหมายเลขด้วย เช่น 'access-list 1 deny [IP]'")
+			_print_to_terminal("% Invalid command: ในโหมดเลเยอร์นี้ ต้องระบุกลุ่มหมายเลขด้วย เช่น 'access-list 1 deny host [IP]'")
 				
 		elif raw_command == "save":
 			_print_to_terminal("% Command rejected: ไม่สามารถเซฟในโหมดปรับแต่งได้ กรุณาพิมพ์ 'ex' ออกไปก่อน")

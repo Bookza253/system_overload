@@ -57,7 +57,8 @@ func setup_switch_challenge():
 	if log_text_edit:
 		log_text_edit.text = "--- VLAN ---\n"
 		log_text_edit.text += "Device Boot Completed. Ready for configuration...\n"
-		log_text_edit.text += "ALERT: Port " + target_port + " link-state changed to DOWN (VLAN Mismatch).\n"
+		# 🟢 เปลี่ยนจาก target_port เป็น selected เพื่อโชว์ชื่อแผนกแทน
+		log_text_edit.text += "ALERT: Department [" + selected + "] link-state changed to DOWN (VLAN Mismatch).\n"
 
 		_print_prompt()
 
