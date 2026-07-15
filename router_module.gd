@@ -1,28 +1,39 @@
 extends Control
 
-# 📢 เพิ่มบรรทัดนี้ที่ด้านบนสุดของไฟล์ router_module.gd ด้วยครับงับ!
+# ==============================================================================
+# 📢 EVENT SIGNALS
+# - alert_status_changed: ยิงสัญญาณสื่อสารเพื่อส่งสเตตัสแจ้งเตือนภัย/ความปลอดภัยกลับไปที่ Desktop หลัก
+# ==============================================================================
 signal alert_status_changed(is_alert)
 
 # ==============================================================================
-# 🚨 1. ONREADY VARIABLES
+# 🚨 1. ONREADY VARIABLES (Safe Node Lifecycle Detection)
+# - ดำเนินการตรวจสอบโครงสร้างโหนดแบบ Fallback เพื่อความปลอดภัยในการเรียกใช้งานโหนดแสดงผล
+# - ป้องกันปัญหาความล่าช้าในการดึงโหนดขณะเริ่มต้นรันไทม์ (Null Instance Prevention)
 # ==============================================================================
 @onready var log_text_edit = $Panel/TextEdit_Log if has_node("Panel/TextEdit_Log") else null 
 @onready var command_input = $Panel/LineEdit_IP if has_node("Panel/LineEdit_IP") else null 
 
+# ==============================================================================
+# CHALLENGE SCENARIO PROPERTIES (VLAN Configuration State)
+# - เก็บค่าพารามิเตอร์ของระบบเครือข่ายจำลอง เพื่อนำมาเทียบความถูกต้อง (Matching Check)
+# - current_cli_mode: ระดับสิทธิ์คำสั่งใน Cisco CLI (0: User, 1: Privileged, 2: Config, 3: Interface Mode)
+# ==============================================================================
 var target_vlan = 0
 var target_port = ""
 var target_ip = ""
 
 var current_vlan_configured = false
 var ping_success = false
-var step_ping_passed = false # 🌟 เพิ่มตัวแปรเช็กสถานะว่า ping ผ่านแล้ว
+var step_ping_passed = false 
 var is_game_over = false
 
-# 🔑 ระดับสถานะโหมด CLI (0: User Mode, 1: Privileged Mode, 2: Config Mode, 3: Interface Mode)
 var current_cli_mode = 0 
 
 # ==============================================================================
-# ⚙️ 2. MAIN SIMULATOR SYSTEM
+# ⚙️ 2. CORE GAMEPLAY SIMULATION (Life Cycle Methods)
+# - จัดเตรียมสถานะเริ่มต้นของ UI และตั้งค่าโจทย์จำลองประจำสถานการณ์
+# - ดำเนินการผูกสัญญาณ Event-Driven เข้ากับระบบเสียง SFX ของ AudioManager
 # ==============================================================================
 func _ready():
 	if command_input: 
@@ -32,7 +43,7 @@ func _ready():
 		
 	setup_switch_challenge()
 	
-	# 🎹 เพิ่มบรรทัดนี้: เมื่อผู้เล่นพิมพ์ตัวหนังสือในช่อง LineEdit ให้เรียกฟังก์ชันทำเสียงพิมพ์
+	# 🎹 Dynamic Event Binding: ลิงก์ระบบเสียงพิมพ์คีย์บอร์ดเข้ากับสัญญาณพิมพ์ LineEdit
 	if command_input:
 		command_input.text_changed.connect(_on_line_edit_text_changed)
 
@@ -40,15 +51,17 @@ func setup_switch_challenge():
 	is_game_over = false
 	current_vlan_configured = false
 	ping_success = false
-	step_ping_passed = false # 🌟 รีเซ็ตสถานะ ping ผ่าน
+	step_ping_passed = false 
 	current_cli_mode = 0 
 	
 	if command_input: 
 		command_input.text = ""
 	
+	# Pool ข้อมูลสำหรับด่านการกำหนดค่าพอร์ตเสมือนแบ่งกลุ่มเครือข่าย (VLAN Access Scenario Dataset)
 	var scenarios = ["Marketing", "Engineering", "Guest_WiFi"]
 	var selected = scenarios[randi() % scenarios.size()]
 	
+	# Random Scenario Generation: สุ่มดึงชุดข้อมูลออกมา 1 Scenario
 	match selected:
 		"Marketing":
 			target_vlan = 10
@@ -71,12 +84,11 @@ func setup_switch_challenge():
 		_print_prompt()
 
 	if command_input:
-		command_input.call_deferred("grab_focus")
+		command_input.call_deferred("grab_focus") # 🟢 บังคับจับโฟกัสช่องรับข้อมูลในเธรดถัดไปทันที เพื่อความเสถียรของคีย์บอร์ดอินพุต
 
-	# 🚨 ยิงสัญญาณเตือนภัยขอบแดงกะพริบทันทีเมื่อมินิเกมด่านนี้พร้อมรัน
+	# 🚨 ยิงสัญญาณบอก Desktop หลัก เพื่อเปิดเอฟเฟกต์สีแดงฉุกเฉินกะพริบทันทีเมื่อเริ่มมินิเกม
 	emit_signal("alert_status_changed", true)
 
-# ฟังก์ชันพิมพ์สถานะโหมดเริ่มต้นของบรรทัด
 func _print_prompt():
 	if not log_text_edit: return
 	match current_cli_mode:
@@ -86,7 +98,6 @@ func _print_prompt():
 		3: log_text_edit.text += "Switch(config-if)# "
 	_scroll_to_bottom()
 
-# 🚀 ฟังก์ชันเชื่อมสัญญาณกด Enter จากช่องพิมพ์ด้านล่าง (LineEdit_IP)
 func _on_line_edit_ip_text_submitted(new_text: String) -> void:
 	if is_game_over or not is_visible_in_tree(): return
 	
@@ -105,18 +116,22 @@ func _on_line_edit_ip_text_submitted(new_text: String) -> void:
 	if log_text_edit:
 		log_text_edit.text += raw_command + "\n"
 	
+	# จำลองความหน่วงการประมวลผลคำสั่งของอุปกรณ์สวิตช์จริง (Execution Latency Simulation)
 	await get_tree().create_timer(0.1).timeout
-	
 	_process_cli_command(raw_command)
 
 	if command_input:
-		command_input.call_deferred("grab_focus")
+		command_input.call_deferred("grab_focus") # 🟢 บังคับล็อกโฟกัสป้องกันการหลุดฟอร์มหลังประมวลผลเสร็จ
 
-# ระบบตัวจำลองการตรวจคำสั่ง
+# ==============================================================================
+# CLI COMMAND PROCESSING (VLAN PORT ASSIGNMENT & ICMP PING CHECK)
+# - ตรรกะคัดกรองระดับสิทธิ์คำสั่ง Cisco CLI (Switch Authorization Level Parsing)
+# - ควบคุมการทำงานของแต่ละระดับโหมด (User, Privileged, Global Config, Interface Config)
+# ==============================================================================
 func _process_cli_command(raw_command: String):
 	var low_cmd = raw_command.to_lower().strip_edges()
 	
-	# 🟢 โหมดที่ 0: User Mode
+	# 🟢 [Authorization Level 0]: User Mode (ตรวจสอบสิทธิ์ความปลอดภัยขั้นต้น)
 	if current_cli_mode == 0:
 		if low_cmd == "enable":
 			current_cli_mode = 1
@@ -125,7 +140,7 @@ func _process_cli_command(raw_command: String):
 		else:
 			_print_to_terminal("% Unknown command. (พิมพ์ 'enable' เพื่อเริ่มต้น)")
 	
-	# 🟢 โหมดที่ 1: Privileged EXEC Mode
+	# 🟢 [Authorization Level 1]: Privileged EXEC Mode (โหมดตรวจสอบและทดสอบสัญญาณด้วย ICMP)
 	elif current_cli_mode == 1:
 		if low_cmd == "configure terminal" or low_cmd == "conf t":
 			current_cli_mode = 2
@@ -135,9 +150,10 @@ func _process_cli_command(raw_command: String):
 			_print_to_terminal("Pinging " + ip_arg + " with 32 bytes of data:")
 			
 			await get_tree().create_timer(0.3).timeout
+			# จำลองผลการตอบรับการติดต่อ (ICMP Echo Reply Success Simulation) เมื่อตั้งค่า VLAN ตรงตามพารามิเตอร์ไอพีโจทย์
 			if current_vlan_configured and ip_arg == target_ip:
 				ping_success = true
-				step_ping_passed = true # 🌟 ปรับสถานะว่า ping ผ่านแล้ว
+				step_ping_passed = true 
 				_print_to_terminal("Reply from " + ip_arg + ": bytes=32 time=4ms TTL=64")
 				_print_to_terminal("📊 Ping statistics: Success Rate 100%")
 			else:
@@ -145,7 +161,7 @@ func _process_cli_command(raw_command: String):
 				_print_to_terminal("Request timed out.")
 				_print_to_terminal("📊 Ping statistics: Lost = 100% (Destination Host Unreachable)")
 				
-		# 🌟 เพิ่มระบบตรวจการพิมพ์คำสั่ง save ในโหมดนี้
+		# Save Guard Handler: บันทึกค่าคอนฟิกไปเป็น Running Config เมื่อทำแบบทดสอบผ่านแล้ว
 		elif low_cmd == "save":
 			if step_ping_passed:
 				_print_to_terminal("\n🛡️ STATUS: VLAN RE-ASSIGNMENT ACTIVE & LOCKED!")
@@ -163,7 +179,7 @@ func _process_cli_command(raw_command: String):
 		else:
 			_print_to_terminal("% Unknown command. (พิมพ์ 'conf t', 'ping [IP]' หรือ 'save')")
 
-	# 🟢 โหมดที่ 2: Global Configuration Mode
+	# 🟢 [Authorization Level 2]: Global Configuration Mode (โหมดระดับการคัดแยกพอร์ตอินเตอร์เฟส)
 	elif current_cli_mode == 2:
 		if low_cmd.begins_with("interface ") or low_cmd.begins_with("int "):
 			var port_arg = raw_command.replace("interface ", "").replace("int ", "").strip_edges()
@@ -174,6 +190,7 @@ func _process_cli_command(raw_command: String):
 				current_cli_mode = 3
 				_print_to_terminal("Entered Interface configuration mode.")
 			else:
+				# Failure Defensive Logic: กรณีการระบุพอร์ตสื่อสารผิดช่องพิกัดจะส่งผลให้ระบบป้องกันดักจับเกมโอเวอร์ทันที
 				trigger_game_over("PORT ERROR:\nคุณเข้าพอร์ตผิดพลาด! พอร์ตนี้ไม่ได้เชื่อมต่อกับเป้าหมายที่เกิดปัญหา")
 				return
 				
@@ -187,7 +204,7 @@ func _process_cli_command(raw_command: String):
 		else:
 			_print_to_terminal("% Invalid syntax. (คำสั่งที่รองรับในโหมดนี้: 'interface [ชื่อพอร์ต]', 'ex')")
 
-	# 🟢 โหมดที่ 3: Interface Configuration Mode
+	# 🟢 [Authorization Level 3]: Interface Configuration Mode (โหมดระดับการผูกความสัมพันธ์ของพอร์ตกับกลุ่ม VLAN)
 	elif current_cli_mode == 3:
 		if low_cmd.begins_with("switchport access vlan "):
 			var vlan_arg = raw_command.replace("switchport access vlan ", "").strip_edges()
@@ -195,6 +212,7 @@ func _process_cli_command(raw_command: String):
 				current_vlan_configured = true
 				_print_to_terminal("Success: Interface " + target_port + " moved to VLAN " + vlan_arg + ".")
 			else:
+				# Failure Defensive Logic: บันทึกกฎเสมือนผิดประเภทส่งผลให้เครือข่ายเกิดสภาวะ Broadcast Storm
 				trigger_game_over("VLAN CRASH:\nคุณใส่หมายเลข VLAN ผิดพลาด ทำให้ระบบลูปชนกันเสียหาย!")
 				return
 		elif low_cmd == "save":
@@ -208,7 +226,8 @@ func _process_cli_command(raw_command: String):
 	_print_prompt()
 
 # ==============================================================================
-# 🎯 3. SUB SYSTEMS
+# 🎯 3. TERMINAL DISPLAY CONTROL SUB-SYSTEMS
+# - ฟังก์ชันการควบคุมการแสดงผลกล่องข้อความและระบบจัดหน้าจออย่างราบรื่นไม่ติดขัด
 # ==============================================================================
 func _print_to_terminal(text: String):
 	if log_text_edit:
@@ -219,11 +238,14 @@ func _scroll_to_bottom():
 	if log_text_edit:
 		log_text_edit.scroll_vertical = log_text_edit.get_line_count()
 
+# ==============================================================================
+# STATE TRANSITIONS (WIN/LOSS LIFE CYCLE)
+# ==============================================================================
 func _check_win_condition():
 	if current_vlan_configured and ping_success and step_ping_passed:
 		_print_to_terminal("\n🟢 SWITCH CONFIGURATION COMPLETE! NETWORK STABLE.")
 		
-		# ✅ ส่งสัญญาณบอกหน้าจอหลักว่า "แก้เสร็จแล้ว ดับขอบจอแดงได้!"
+		# ✅ ดับระบบไซเรนแจ้งเตือนขอบสีแดงที่หน้าจอหลักทันทีเพื่อส่งมอบความปลอดภัยคืนระบบ
 		emit_signal("alert_status_changed", false)
 		
 		if "completed_modules_count" in Global:
@@ -236,7 +258,7 @@ func trigger_game_over(reason_text):
 	is_game_over = true
 	Global.game_over_reason = reason_text
 	
-	# 🚨 ดับขอบจอแดงก่อนที่ระบบจะย้ายซีนไปหน้า Blue Screen
+	# ✅ ยุติการแจ้งเตือนภัยบนเดสก์ท็อปชั่วคราวก่อนดำเนินการเปลี่ยน Scene-tree ไปยังหน้า Blue Screen
 	emit_signal("alert_status_changed", false)
 	
 	get_tree().change_scene_to_file("res://blue_screen_scene.tscn")
@@ -249,15 +271,12 @@ func _close_this_popup():
 		self.hide()
 
 # ==============================================================================
-# 🔊 4. SFX SOUND CONTROLLER (ดึงเสียงตรงจาก AudioManager)
+# 🔊 4. HARDWARE INPUT SFX CONTROLLER (Autoload Integration)
 # ==============================================================================
-
-# 🎹 ฟังก์ชันทำเสียงพิมพ์แกร๊ก ๆ
 func _on_line_edit_text_changed(_new_text: String):
 	if AudioManager and AudioManager.sfx_type:
 		AudioManager.sfx_type.play()
 
-# 🖱️ ฟังก์ชันดักจับเมาส์คลิกซ้ายบนหน้าต่างมินิเกมนี้ แล้วสั่งเล่นเสียงคลิก
 func _gui_input(event):
 	if event is InputEventMouseButton:
 		if event.button_index == MOUSE_BUTTON_LEFT and event.pressed:

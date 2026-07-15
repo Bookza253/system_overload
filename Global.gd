@@ -1,12 +1,20 @@
 extends Node
 
-# ตัวแปรกลางเอาไว้เช็กโหมด: false = แยกเล่น (Training), true = โหมดผสม (Mix)
-var is_mix_mode = false
+# ==============================================================================
+# 🎮 GLOBAL GAME STATE SINGLETON (AUTOLOAD)
+# - สคริปต์นี้ทำหน้าที่เป็นตัวควบคุมสเตทส่วนกลาง (Centralized State Controller) 
+# - ใช้สำหรับแชร์และส่งผ่านข้อมูลข้าม Scene Tree (Cross-Scene Data Persistence)
+# ==============================================================================
 
-# ตัวแปรเก็บเรื่องที่เลือก: "network", "task_manager" หรือ "mix"
-var selected_topic = ""
+# 🌐 Gameplay Mode Flag: ควบคุมโหมดการเล่น (False: แยกหัวข้อฝึกฝน, True: โหมดผสมผสาน)
+var is_mix_mode: bool = false
 
+# 📑 Selected Scenario Topic: เก็บค่าคีย์เวิร์ดด่านปัจจุบัน ("network", "task_manager", "router", "vlan")
+var selected_topic: String = ""
 
+# 🛡️ Completion Tracker: จำนวนโมดูลภารกิจที่ผู้เล่นเคลียร์ได้สำเร็จในรอบการเล่นนั้น ๆ
+var completed_modules_count: int = 0
 
-var completed_modules_count : int = 0
-var game_over_reason : String = "" # 🌟 เพิ่มตัวแปรนี้ไว้เก็บสาเหตุการแพ้จากแต่ละด่าน
+# ❌ Exception & Failure Logger: ใช้จัดเก็บสายอักขระ (String) แสดงสาเหตุความล้มเหลว
+# เพื่อส่งต่อข้อมูลเชิงลึกไปเรนเดอร์บนหน้าจอระบบปฏิบัติการล่ม (Blue Screen Crash Dump)
+var game_over_reason: String = ""

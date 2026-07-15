@@ -1,22 +1,29 @@
 extends Control
 
-
 # ==============================================================================
-# 🚨 1. ONREADY VARIABLES
+# 🚨 1. ONREADY VARIABLES (Safe Node Detection)
+# - ตรวจสอบและดักจับอินสแตนซ์ของโหนดในระบบแบบ Fallback เพื่อความปลอดภัยในการเรียกใช้งาน
+# - ป้องกันปัญหาความล่าช้าในการดึงโหนดขณะเริ่มต้นรันไทม์ (Null Instance Prevention)
 # ==============================================================================
 @onready var log_text_edit = $Panel/TextEdit_Log if has_node("Panel/TextEdit_Log") else null 
 @onready var command_input = $Panel/LineEdit_IP if has_node("Panel/LineEdit_IP") else null 
 
+# ==============================================================================
+# CHALLENGE SCENARIO PROPERTIES
+# - target_dept, target_ip: ข้อมูลแผนกและไอพีปลายทางที่ระบบสุ่มขึ้นมาเพื่อเป็นโจทย์
+# - current_cli_mode: ระดับสิทธิ์คำสั่งใน Cisco CLI (0: User, 1: Privileged, 2: Config Mode)
+# ==============================================================================
 var target_dept = ""
 var target_ip = "" 
 
 var is_game_over = false
-var current_cli_mode = 0 # 0: User, 1: Privileged, 2: Config Mode
-
+var current_cli_mode = 0 
 var step_ip_blocked = false
 
 # ==============================================================================
-# ⚙️ 2. MAIN FIREWALL SYSTEM
+# ⚙️ SYSTEM INITIALIZATION (LIFE CYCLE)
+# - จัดเตรียมสถานะเริ่มต้นของ UI และล้างค่าประวัติ Terminal 
+# - ทำการลงทะเบียนเชื่อมโยง Event สัญญาณพิมพ์คีย์บอร์ดเข้ากับ AudioManager แบบ Dynamic
 # ==============================================================================
 func _ready():
 	if command_input: 
@@ -26,7 +33,7 @@ func _ready():
 		
 	setup_firewall_challenge()
 	
-	# 🎹 เพิ่มบรรทัดนี้: เมื่อผู้เล่นพิมพ์ตัวหนังสือในช่อง LineEdit ให้เรียกฟังก์ชันทำเสียงพิมพ์
+	# 🎹 Dynamic Event Binding: ลิงก์ระบบเสียงพิมพ์กับสัญญาณการกดแป้นพิมพ์
 	if command_input:
 		command_input.text_changed.connect(_on_line_edit_text_changed)
 
@@ -38,6 +45,7 @@ func setup_firewall_challenge():
 	if command_input: 
 		command_input.text = ""
 		
+	# Pool ข้อมูลสำหรับการจำลองสถานการณ์สุ่มรับมือภัยคุกคาม (Simulation Scenario Dataset)
 	var departments = [
 		{"name": "Accounting", "ip": "192.168.1.50"},
 		{"name": "HR", "ip": "192.168.2.10"},
@@ -56,8 +64,13 @@ func setup_firewall_challenge():
 		_print_prompt()
 		
 	if command_input:
-		command_input.call_deferred("grab_focus") # 🟢 ป้องกันโฟกัสหลุดตอนเริ่มเกม
+		command_input.call_deferred("grab_focus") # 🟢 บังคับจับโฟกัสช่องรับข้อมูลในเธรดถัดไปทันที เพื่อลดข้อผิดพลาดของการรับอินพุต
 
+# ==============================================================================
+# CLI COMMAND PROCESSING (ACCESS-LIST SECURITY RULE PARSING)
+# - ตรรกะแยกย่อยตามลำดับขั้นของสิทธิ์สวิตช์ควบคุม (Cisco CLI Authorization Levels)
+# - ตรวจจับไวยากรณ์คำสั่งมาตรฐานของ ACL (Standard Access Control List Rule Definition)
+# ==============================================================================
 func _print_prompt():
 	if not log_text_edit: return
 	match current_cli_mode:
@@ -83,18 +96,16 @@ func _on_line_edit_ip_text_submitted(new_text: String) -> void:
 	if log_text_edit:
 		log_text_edit.text += raw_command + "\n"
 		
+	# รันจังหวะประมวลผลคำสั่งแบบดีเลย์สั้นเพื่อจำลองความหน่วงของการตอบสนองฮาร์ดแวร์จริง (Latency Simulation)
 	await get_tree().create_timer(0.1).timeout
 	_process_firewall_command(raw_command)
 	
 	if command_input:
-		command_input.call_deferred("grab_focus") # 🟢 บังคับล็อกโฟกัสหลังพิมพ์เสร็จทุกครั้ง ไม่ต้องคอยกดคลิกใหม่
+		command_input.call_deferred("grab_focus") # 🟢 ป้องกันการหลุดโฟกัสหลังการประมวลผลคำสั่งเสร็จสิ้น
 
-# ==============================================================================
-# 🎮 CLI COMMAND PROCESSING (ACCESS-LIST UPDATE)
-# ==============================================================================
 func _process_firewall_command(raw_command: String):
 	
-	# 🟩 โหมดที่ 0: User Mode
+	# 🟩 [Authorization Mode 0]: User Mode (ตรวจสอบสิทธิ์การไต่ระดับระบบ)
 	if current_cli_mode == 0:
 		if raw_command == "enable":
 			current_cli_mode = 1
@@ -103,7 +114,7 @@ func _process_firewall_command(raw_command: String):
 		else:
 			_print_to_terminal("% Unknown command. (พิมพ์ 'enable' เพื่อเริ่มต้น)")
 
-	# 🟩 โหมดที่ 1: Privileged EXEC Mode
+	# 🟩 [Authorization Mode 1]: Privileged EXEC Mode (โหมดจัดการข้อมูลบันทึกและพอร์ต)
 	elif current_cli_mode == 1:
 		if raw_command == "configure terminal" or raw_command == "conf t":
 			current_cli_mode = 2
@@ -121,20 +132,21 @@ func _process_firewall_command(raw_command: String):
 		else:
 			_print_to_terminal("% Unknown command. (พิมพ์ 'conf t' เพื่อตั้งค่า หรือ 'save' เพื่อบันทึก)")
 
-	# 🟩 โหมดที่ 2: Global Configuration Mode
+	# 🟩 [Authorization Mode 2]: Global Configuration Mode (โหมดแก้ไขไฟล์การตั้งค่าระบบหลัก)
 	elif current_cli_mode == 2:
 		
-		# 🛑 ตรวจสอบคำสั่งขึ้นต้นด้วย access-list 1 deny 
+		# ดักวิเคราะห์พารามิเตอร์การตั้งค่ากฎเพื่อคัดกรองหมายเลข IP แหล่งกำเนิดภัยพิบัติ
 		if raw_command.begins_with("access-list 1 deny "):
 			var ip_arg = raw_command.replace("access-list 1 deny ", "").strip_edges()
 			if ip_arg == target_ip: 
 				step_ip_blocked = true
 				_print_to_terminal("Success: Standard Access List 1 updated. Traffic from " + ip_arg + " is now dropped.")
 			else:
+				# Defensive Failure Logic: กรณีใส่ไอพีของแผนกปกติจะส่งผลให้ระบบการสื่อสารภายในพังทลาย
 				trigger_game_over("FATAL BLOCK ERROR:\nคุณใส่ IP ผิดพลาด! ไปสั่งบล็อกแผนกอื่นที่ไม่ได้โดนโจมตี ทำให้ระบบล่ม")
 				return
 		
-		# ดักกรณีพิมพ์สั้นไป หรือพิมพ์ผิดรูปแบบ
+		# ระบบตรวจจับแจ้งความผิดพลาดเพื่อแนะนำรูปแบบไวยากรณ์ (Syntax Suggestion Parser)
 		elif raw_command.begins_with("deny ip "):
 			_print_to_terminal("% Invalid command: ในโหมดเลเยอร์นี้ ต้องระบุกลุ่มหมายเลขด้วย เช่น 'access-list 1 deny host [IP]'")
 				
@@ -150,7 +162,7 @@ func _process_firewall_command(raw_command: String):
 	_print_prompt()
 
 # ==============================================================================
-# 🎯 3. SUB SYSTEMS
+# 🎯 TERMINAL DISPLAY CONTROL SUB-SYSTEMS
 # ==============================================================================
 func _print_to_terminal(text: String):
 	if log_text_edit:
@@ -161,6 +173,9 @@ func _scroll_to_bottom():
 	if log_text_edit:
 		log_text_edit.scroll_vertical = log_text_edit.get_line_count()
 
+# ==============================================================================
+# WIN/LOSS STATE HANDLERS
+# ==============================================================================
 func _check_win_condition():
 	if "completed_modules_count" in Global:
 		Global.completed_modules_count += 1
@@ -182,15 +197,12 @@ func _close_this_popup():
 		self.hide()
 
 # ==============================================================================
-# 🔊 4. SFX SOUND CONTROLLER (ดึงเสียงตรงจาก AudioManager)
+# 🔊 SFX SOUND CONTROL (Autoload Bridge)
 # ==============================================================================
-
-# 🎹 ฟังก์ชันทำเสียงพิมพ์แกร๊ก ๆ
 func _on_line_edit_text_changed(_new_text: String):
 	if AudioManager and AudioManager.sfx_type:
 		AudioManager.sfx_type.play()
 
-# 🖱️ ฟังก์ชันดักจับเมาส์คลิกซ้ายบนหน้าต่างมินิเกมนี้ แล้วสั่งเล่นเสียงคลิก
 func _gui_input(event):
 	if event is InputEventMouseButton:
 		if event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
