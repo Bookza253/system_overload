@@ -135,7 +135,6 @@ func _process_router_command(raw_command: String):
 				if input_net == target_network and input_mask == target_mask and input_next == target_next_hop:
 					step_route_added = true
 					_print_to_terminal("Success: Static route added to routing table. Packet delivery test passed.")
-					_print_to_terminal("ℹ️ [System]: พิมพ์ 'ex' ออกไปด้านนอก แล้วสั่ง 'save' เพื่อเปิดใช้งานระบบถาวร")
 				else:
 					var fail_reason = "คุณป้อนพารามิเตอร์เส้นทางผิดพลาด! ข้อมูลไม่แมตช์กับเครือข่ายปลายทาง:\n"
 					fail_reason += "ค่าที่คุณใส่: Net=" + input_net + " Mask=" + input_mask + " Next-Hop=" + input_next

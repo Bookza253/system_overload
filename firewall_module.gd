@@ -125,7 +125,6 @@ func _process_firewall_command(raw_command: String):
 			if ip_arg == target_ip: 
 				step_ip_blocked = true
 				_print_to_terminal("Success: Standard Access List 1 updated. Traffic from " + ip_arg + " is now dropped.")
-				_print_to_terminal("ℹ️ [System]: พิมพ์ 'ex' เพื่อออกจากโหมดปรับแต่ง แล้วพิมพ์ 'save' เพื่อบันทึกข้อมูล")
 			else:
 				trigger_game_over("FATAL BLOCK ERROR:\nคุณใส่ IP ผิดพลาด! ไปสั่งบล็อกแผนกอื่นที่ไม่ได้โดนโจมตี ทำให้ระบบล่ม")
 				return

@@ -33,19 +33,23 @@ func setup_nat_challenge():
 	if command_input: 
 		command_input.text = ""
 		
-	# สุ่มอินเตอร์เฟสและไอพีขาออก (Public IP) ของ ISP
-	var interfaces = ["Gi0/1", "Gi0/2", "fa0/1"]
-	target_interface = interfaces[randi() % interfaces.size()]
-	target_acl = [1, 5, 10][randi() % 3] 
+	var challenge_pool = [
+		{"interface": "Gi0/1", "acl": 1, "ip": "192.168.1.50"},
+		{"interface": "Gi0/2", "acl": 5, "ip": "192.168.2.10"},
+		{"interface": "fa0/1", "acl": 10, "ip": "192.168.3.99"}
+	]
 	
-	var ip_list = ["192.168.1.50", "192.168.2.10", "192.168.3.99"]
-	public_ip = ip_list[randi() % ip_list.size()]
+	# สุ่มเลือกชุดข้อมูลจาก Pool 1 ชุด
+	var selected_setup = challenge_pool[randi() % challenge_pool.size()]
+	
+	target_interface = selected_setup["interface"]
+	target_acl = selected_setup["acl"]
+	public_ip = selected_setup["ip"]
 	
 	# ข้อความต้อนรับเข้าสู่ด่านและแจ้งคำสั่งโจทย์
 	var startup_msg = "--- NAT ---\n"
 	startup_msg += "🚨 EMERGENCY: Internal users cannot access the Internet (No NAT Translation).\n"
 	startup_msg += "▪️ Configure NAT Outbound Interface: " + str(target_interface) + "\n"
-
 	
 	_write_to_terminal_safe(startup_msg)
 	_print_prompt()
@@ -88,23 +92,24 @@ func _on_line_edit_ip_text_submitted(new_text: String) -> void:
 # 🎮 CLI COMMAND PROCESSING (NAT OVERLOAD SYSTEM)
 # ==============================================================================
 func _process_nat_command(raw_command: String):
+	# แปลงเป็นตัวพิมพ์เล็กทั้งหมดเพื่อเช็กคำสั่งพื้นฐานทั่วไป
+	var low_raw = raw_command.to_lower().strip_edges()
 	
 	# 🟩 โหมดที่ 0: User Mode
 	if current_cli_mode == 0:
-		if raw_command.to_lower() == "enable":
+		if low_raw == "enable":
 			current_cli_mode = 1
-		elif raw_command.to_lower() == "conf t" or raw_command.to_lower().begins_with("ip nat ") or raw_command.to_lower() == "exit" or raw_command.to_lower() == "ex" or raw_command.to_lower() == "save":
+		elif low_raw == "conf t" or low_raw.begins_with("ip nat ") or low_raw == "exit" or low_raw == "ex" or low_raw == "save":
 			_append_to_terminal_safe("% Command rejected: ต้องกรอกคำสั่ง 'enable' เพื่อเข้าสิทธิ์แอดมินก่อน\n")
 		else:
 			_append_to_terminal_safe("% Unknown command. (พิมพ์ 'enable' เพื่อเริ่มต้น)\n")
 
-	# 🟩 โหมดที่ 1: Privileged EXEC Mode
+	# 🟩 โหมดที่ 1: Privileged EXEC Mode (พิมพ์ save ที่โหมดนี้เพื่อชนะ!)
 	elif current_cli_mode == 1:
-		var low_cmd = raw_command.to_lower()
-		if low_cmd == "configure terminal" or low_cmd == "conf t":
+		if low_raw == "configure terminal" or low_raw == "conf t":
 			current_cli_mode = 2
 			_append_to_terminal_safe("Enter configuration commands, one per line. End with 'exit' or 'ex'.\n")
-		elif low_cmd == "save":
+		elif low_raw == "save":
 			if step_nat_configured:
 				_append_to_terminal_safe("\n🛡️ STATUS: DYNAMIC NAT OVERLOAD ACTIVATED!\n")
 				_append_to_terminal_safe("🟢 IP TRANSLATION TABLE LINKED TO PUBLIC IP: " + public_ip + "\n")
@@ -113,45 +118,45 @@ func _process_nat_command(raw_command: String):
 				if is_game_over: return
 			else:
 				_append_to_terminal_safe("% Command rejected: อินเทอร์เน็ตยังใช้งานไม่ได้! กรุณาเข้าไปตั้งค่า NAT ก่อน\n")
-		elif low_cmd == "exit" or low_cmd == "ex":
+		elif low_raw == "exit" or low_raw == "ex":
 			_append_to_terminal_safe("% Connection closed.\n")
 		else:
 			_append_to_terminal_safe("% Unknown command. (พิมพ์ 'conf t' เพื่อเข้าโหมดคอนฟิก หรือ 'save' เพื่อบันทึก)\n")
 
-	# 🟩 โหมดที่ 2: Global Configuration Mode
+	# 🟩 โหมดที่ 2: Global Configuration Mode (ดึงกลับเข้ามาในบล็อกหลักแล้ว)
 	elif current_cli_mode == 2:
-		
-		# 🛑 ตรวจสอบคำสั่งตั้งค่าความสัมพันธ์ของระบบ NAT Overload (PAT)
-		if raw_command.to_lower().begins_with("ip nat inside source list "):
-			# แยก arguments ออกมาโดยยังคงตัวพิมพ์เดิมไว้ก่อน เผื่อใช้แสดงผลตอนพิมพ์ผิด
-			var nat_args = raw_command.right(-26).strip_edges() 
-			var parts = nat_args.split(" ", false)
+		# 🛑 ตรวจจับคำสั่ง IP NAT เปลี่ยนมาตรวจสอบ IP Address
+		if low_raw.begins_with("ip nat "):
+			var regex = RegEx.new()
+			regex.compile("^ip\\s+nat\\s+inside\\s+source\\s+list\\s+(\\d+)\\s+interface\\s+(\\S+)\\s+overload$")
+			var result = regex.search(low_raw)
 			
-			if parts.size() == 4 and parts[1].to_lower() == "interface" and parts[3].to_lower() == "overload":
-				var input_acl = parts[0]
-				var input_interface = parts[2]
+			if result:
+				var input_acl = result.get_string(1).strip_edges()
+				var input_ip = result.get_string(2).strip_edges()
 				
-				#  จุดสำคัญ: ใช้ .to_lower() เปรียบเทียบชื่อพอร์ต ทำให้พิมพ์ตัวเล็กหรือตัวใหญ่ก็ผ่าน
-				if input_acl == str(target_acl) and input_interface.to_lower() == target_interface.to_lower():
+				if str(input_acl) == str(target_acl) and input_ip == str(public_ip):
 					step_nat_configured = true
-					_append_to_terminal_safe("Success: NAT Overload translation registered dynamically on " + input_interface + ".\n")
-					_append_to_terminal_safe("ℹ️ [System]: พิมพ์ 'ex' ออกด้านนอก แล้วพิมพ์ 'save' เพื่อเริ่มปล่อยแพ็กเก็ตออนไลน์\n")
+					_append_to_terminal_safe("Success: NAT Overload translation registered dynamically on IP " + public_ip + ".\n")
 				else:
 					var fail_reason = "คุณกำหนดพารามิเตอร์การแปลงพอร์ตผิดพลาด ลิงก์ระบบปลายทางล่ม:\n"
-					fail_reason += "ค่าที่คุณใส่: Access-List=" + input_acl + " Interface=" + input_interface
+					fail_reason += "ค่าที่คุณใส่: Access-List=" + input_acl + " IP=" + input_ip + "\n"
+					fail_reason += "ค่าที่ถูกต้องตามโจทย์: Access-List=" + str(target_acl) + " IP=" + public_ip
 					trigger_game_over(fail_reason)
 					return
 			else:
-				_append_to_terminal_safe("% Incomplete syntax: รูปแบบคือ 'ip nat inside source list [เลขACL] interface [ชื่ออินเตอร์เฟส] overload'\n")
-				
-		elif raw_command.to_lower() == "save":
+				_append_to_terminal_safe("% Incomplete syntax: รูปแบบคือ 'ip nat inside source list [เลขACL] interface [IP_Address] overload'\n")
+		
+		# 🌟 ดักแก่: ถ้ากดเซฟในโหมด config จะแจ้งเตือนให้กด ex ออกไปก่อนแบบไม่แครช
+		elif low_raw == "save":
 			_append_to_terminal_safe("% Command rejected: ไม่สามารถบันทึกค่าในโหมดคอนฟิกได้ กรุณาพิมพ์ 'ex' ออกไปก่อน\n")
 				
-		elif raw_command.to_lower() == "exit" or raw_command.to_lower() == "ex": 
+		elif low_raw == "exit" or low_raw == "ex": 
 			current_cli_mode = 1
 			_append_to_terminal_safe("Leaving Configuration Mode.\n")
 		else:
-			_append_to_terminal_safe("% Invalid syntax. (คำสั่งที่รองรับ: 'ip nat inside source list [เลข] interface [ชื่อ] overload', 'ex')\n")
+			_append_to_terminal_safe("% Invalid syntax. (คำสั่งที่รองรับ: 'ip nat inside source list [acl] interface [ip] overload', 'ex')\n")
+			
 	_print_prompt()
 
 # ==============================================================================

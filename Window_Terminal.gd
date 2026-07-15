@@ -37,6 +37,7 @@ func update_cheat_sheet_info():
 		text_display += "  Network: 192.168.71.0 | Mask: 255.255.255.0 | Next-Hop: 192.168.10.254\n\n"
 		text_display += "━━━━━━━━━━━━━━━━━━━━━━━━\n"
 		text_display += "💡 ตรวจสอบชื่อแผนกหจากด่านหลัก "
+		text_display += "ℹ️ อย่าลืม Save ทุกครั้งหลังแก้ไขเสร็จ"
 
 
 	# --------------------------------------------------------------------------
@@ -50,6 +51,7 @@ func update_cheat_sheet_info():
 		text_display += "▪️ แผนก: R&D\n  IP Address: 192.168.4.25\n\n"
 		text_display += "━━━━━━━━━━━━━━━━━━━━━━━━\n"
 		text_display += "💡 ตรวจสอบหน้าจอแจ้งเตือนแอปหลักว่าแผนกใดถูกโจมตี "
+		text_display += "ℹ️ อย่าลืม Save ทุกครั้งหลังแก้ไขเสร็จ"
 
 	# --------------------------------------------------------------------------
 	# 📶 3. ด่าน ROUTER
@@ -57,13 +59,14 @@ func update_cheat_sheet_info():
 	elif current_topic == "router":
 		text_display += "📍 [รายชื่อแผนกและ VLAN ID ในด่าน SWITCH VLAN]\n\n"
 		text_display += "▪️ แผนก: Marketing\n"
-		text_display += "  VLAN: 10 | Port: fa0/1 | IP: 192.168.1.99\n\n"
+		text_display += "  VLAN: 10 | Port: fa0/11 | IP: 192.168.1.99\n\n"
 		text_display += "▪️ แผนก: Engineering\n"
-		text_display += "  VLAN: 20 | Port: fa0/2 | IP: 192.168.2.99\n\n"
+		text_display += "  VLAN: 20 | Port: fa0/25 | IP: 192.168.2.99\n\n"
 		text_display += "▪️ แผนก: Guest_WiFi\n"
-		text_display += "  VLAN: 30 | Port: fa0/5 | IP: 192.168.3.77\n\n"
+		text_display += "  VLAN: 30 | Port: fa0/17 | IP: 192.168.3.77\n\n" 
 		text_display += "━━━━━━━━━━━━━━━━━━━━━━━━\n"
 		text_display += "💡 ตรวจสอบพอร์ตเชื่อมต่อจากด่านหลัก "
+		text_display += "ℹ️ อย่าลืม Save ทุกครั้งหลังแก้ไขเสร็จ"
 
 	# --------------------------------------------------------------------------
 	# 🌐 4. ด่าน NAT (เชื่อมโยงจากค่า "vlan" หรือโมดูล "pdpa")
@@ -75,6 +78,7 @@ func update_cheat_sheet_info():
 		text_display += "▪️ port: fa0/1 | ACL: 10 | IP: 192.168.3.99\n\n"
 		text_display += "━━━━━━━━━━━━━━━━━━━━━━━━\n"
 		text_display += "💡 ตรวจสอบพอร์ตเชื่อมต่อจากด่านหลัก "
+		text_display += "ℹ️ อย่าลืม Save ทุกครั้งหลังแก้ไขเสร็จ"
 
 	# 🔒 โหมดสำรอง
 	else:

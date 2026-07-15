@@ -12,6 +12,7 @@ var target_ip = ""
 
 var current_vlan_configured = false
 var ping_success = false
+var step_ping_passed = false # 🌟 เพิ่มตัวแปรเช็กสถานะว่า ping ผ่านแล้ว
 var is_game_over = false
 
 # 🔑 ระดับสถานะโหมด CLI (0: User Mode, 1: Privileged Mode, 2: Config Mode, 3: Interface Mode)
@@ -32,6 +33,7 @@ func setup_switch_challenge():
 	is_game_over = false
 	current_vlan_configured = false
 	ping_success = false
+	step_ping_passed = false # 🌟 รีเซ็ตสถานะ ping ผ่าน
 	current_cli_mode = 0 
 	
 	if command_input: 
@@ -57,7 +59,6 @@ func setup_switch_challenge():
 	if log_text_edit:
 		log_text_edit.text = "--- VLAN ---\n"
 		log_text_edit.text += "Device Boot Completed. Ready for configuration...\n"
-		# 🟢 เปลี่ยนจาก target_port เป็น selected เพื่อโชว์ชื่อแผนกแทน
 		log_text_edit.text += "ALERT: Department [" + selected + "] link-state changed to DOWN (VLAN Mismatch).\n"
 
 		_print_prompt()
@@ -72,7 +73,7 @@ func _print_prompt():
 		0: log_text_edit.text += "Switch> "
 		1: log_text_edit.text += "Switch# "
 		2: log_text_edit.text += "Switch(config)# "
-		3: log_text_edit.text += "Switch(config-if)# " # 🟢 เพิ่ม Prompt โหมด Interface
+		3: log_text_edit.text += "Switch(config-if)# "
 	_scroll_to_bottom()
 
 # 🚀 ฟังก์ชันเชื่อมสัญญาณกด Enter จากช่องพิมพ์ด้านล่าง (LineEdit_IP)
@@ -103,80 +104,93 @@ func _on_line_edit_ip_text_submitted(new_text: String) -> void:
 
 # ระบบตัวจำลองการตรวจคำสั่ง
 func _process_cli_command(raw_command: String):
+	var low_cmd = raw_command.to_lower().strip_edges()
+	
 	# 🟢 โหมดที่ 0: User Mode
 	if current_cli_mode == 0:
-		if raw_command == "enable":
+		if low_cmd == "enable":
 			current_cli_mode = 1
-		elif raw_command.begins_with("ping ") or raw_command.begins_with("interface ") or raw_command.begins_with("int ") or raw_command.begins_with("switchport ") or raw_command == "exit" or raw_command == "ex":
+		elif low_cmd.begins_with("ping ") or low_cmd.begins_with("interface ") or low_cmd.begins_with("int ") or low_cmd.begins_with("switchport ") or low_cmd == "exit" or low_cmd == "ex" or low_cmd == "save":
 			_print_to_terminal("% Command rejected: ต้องพิมพ์ 'enable' ก่อนเข้าจัดการระบบ")
 		else:
 			_print_to_terminal("% Unknown command. (พิมพ์ 'enable' เพื่อเริ่มต้น)")
 	
 	# 🟢 โหมดที่ 1: Privileged EXEC Mode
 	elif current_cli_mode == 1:
-		if raw_command == "configure terminal" or raw_command == "conf t":
+		if low_cmd == "configure terminal" or low_cmd == "conf t":
 			current_cli_mode = 2
 			_print_to_terminal("Enter configuration commands, one per line. End with CNTL/Z.")
-		elif raw_command.begins_with("ping "):
+		elif low_cmd.begins_with("ping "):
 			var ip_arg = raw_command.replace("ping ", "").strip_edges()
 			_print_to_terminal("Pinging " + ip_arg + " with 32 bytes of data:")
 			
 			await get_tree().create_timer(0.3).timeout
 			if current_vlan_configured and ip_arg == target_ip:
 				ping_success = true
+				step_ping_passed = true # 🌟 ปรับสถานะว่า ping ผ่านแล้ว
 				_print_to_terminal("Reply from " + ip_arg + ": bytes=32 time=4ms TTL=64")
 				_print_to_terminal("📊 Ping statistics: Success Rate 100%")
-				_check_win_condition()
-				if is_game_over: return
 			else:
 				ping_success = false
 				_print_to_terminal("Request timed out.")
 				_print_to_terminal("📊 Ping statistics: Lost = 100% (Destination Host Unreachable)")
-		elif raw_command.begins_with("interface ") or raw_command.begins_with("int ") or raw_command.begins_with("switchport "):
+				
+		# 🌟 เพิ่มระบบตรวจการพิมพ์คำสั่ง save ในโหมดนี้
+		elif low_cmd == "save":
+			if step_ping_passed:
+				_print_to_terminal("\n🛡️ STATUS: VLAN RE-ASSIGNMENT ACTIVE & LOCKED!")
+				_print_to_terminal("🟢 PORT " + target_port.to_upper() + " RUNNING ON VLAN " + str(target_vlan))
+				_print_to_terminal("🟢 CONFIGURATION SUCCESSFULLY SAVED TO RUNNING-CONFIG.")
+				_check_win_condition()
+				if is_game_over: return
+			else:
+				_print_to_terminal("% Command rejected: ระบบยังทำงานไม่สมบูรณ์! กรุณาทำตามโจทย์และตรวจสอบผลการ ping ให้สำเร็จก่อน")
+				
+		elif low_cmd.begins_with("interface ") or low_cmd.begins_with("int ") or low_cmd.begins_with("switchport "):
 			_print_to_terminal("% Command rejected: กรุณาเข้าโหมด Config โดยพิมพ์ 'conf t' ก่อน")
-		elif raw_command == "exit" or raw_command == "ex":
+		elif low_cmd == "exit" or low_cmd == "ex":
 			_print_to_terminal("% Connection closed.")
 		else:
-			_print_to_terminal("% Unknown command. (พิมพ์ 'conf t' หรือ 'ping [IP]')")
+			_print_to_terminal("% Unknown command. (พิมพ์ 'conf t', 'ping [IP]' หรือ 'save')")
 
 	# 🟢 โหมดที่ 2: Global Configuration Mode
 	elif current_cli_mode == 2:
-		# ตรวจสอบการพิมพ์เข้า Port (รองรับทั้งคำเต็ม 'interface' และคำย่อ 'int')
-		if raw_command.begins_with("interface ") or raw_command.begins_with("int "):
+		if low_cmd.begins_with("interface ") or low_cmd.begins_with("int "):
 			var port_arg = raw_command.replace("interface ", "").replace("int ", "").strip_edges()
-			
-			# แปลงฟอร์แมตตัวย่อ (เช่น fa 0/1 หรือ fa0/1 ให้เข้าใจตรงกัน)
 			var check_port = port_arg.replace(" ", "") 
 			var target_check = target_port.replace(" ", "")
 			
-			if check_port == target_check:
-				current_cli_mode = 3 # ➡️ ย้ายเข้าสู่โหมด Interface
+			if check_port.to_lower() == target_check.to_lower():
+				current_cli_mode = 3
 				_print_to_terminal("Entered Interface configuration mode.")
 			else:
 				trigger_game_over("PORT ERROR:\nคุณเข้าพอร์ตผิดพลาด! พอร์ตนี้ไม่ได้เชื่อมต่อกับเป้าหมายที่เกิดปัญหา")
 				return
 				
-		elif raw_command.begins_with("switchport access vlan "):
+		elif low_cmd.begins_with("switchport access vlan "):
 			_print_to_terminal("% Command rejected: ต้องพิมพ์เข้าพอร์ตก่อน เช่น 'int " + target_port + "'")
-		elif raw_command == "exit" or raw_command == "ex":
+		elif low_cmd == "save":
+			_print_to_terminal("% Command rejected: ไม่สามารถบันทึกค่าในโหมดคอนฟิกได้ กรุณาพิมพ์ 'ex' ออกไปด้านนอกก่อน")
+		elif low_cmd == "exit" or low_cmd == "ex":
 			current_cli_mode = 1
 			_print_to_terminal("Leaving Configuration Mode.")
 		else:
 			_print_to_terminal("% Invalid syntax. (คำสั่งที่รองรับในโหมดนี้: 'interface [ชื่อพอร์ต]', 'ex')")
 
-	# 🟢 โหมดที่ 3: Interface Configuration Mode (โหมดที่เพิ่มขึ้นมาใหม่)
+	# 🟢 โหมดที่ 3: Interface Configuration Mode
 	elif current_cli_mode == 3:
-		if raw_command.begins_with("switchport access vlan "):
+		if low_cmd.begins_with("switchport access vlan "):
 			var vlan_arg = raw_command.replace("switchport access vlan ", "").strip_edges()
 			if vlan_arg == str(target_vlan):
 				current_vlan_configured = true
 				_print_to_terminal("Success: Interface " + target_port + " moved to VLAN " + vlan_arg + ".")
-				_print_to_terminal("ℹ️ [System]: ตั้งค่าเสร็จแล้ว พิมพ์ 'ex' ถอยออกไปเรื่อยๆ จนถึงโหมดปกติเพื่อลอง ping")
 			else:
 				trigger_game_over("VLAN CRASH:\nคุณใส่หมายเลข VLAN ผิดพลาด ทำให้ระบบลูปชนกันเสียหาย!")
 				return
-		elif raw_command == "exit" or raw_command == "ex":
-			current_cli_mode = 2 # ⬅️ ถอยกลับมาที่โหมด Global Config ก่อนหนึ่งขั้น
+		elif low_cmd == "save":
+			_print_to_terminal("% Command rejected: ไม่สามารถบันทึกค่าในโหมดอินเตอร์เฟสได้ กรุณาพิมพ์ 'ex' ถอยออกไปก่อน")
+		elif low_cmd == "exit" or low_cmd == "ex":
+			current_cli_mode = 2
 			_print_to_terminal("Leaving Interface configuration mode.")
 		else:
 			_print_to_terminal("% Invalid syntax. (คำสั่งที่รองรับในโหมดนี้: 'switchport access vlan [เลข]', 'ex')")
@@ -196,7 +210,8 @@ func _scroll_to_bottom():
 		log_text_edit.scroll_vertical = log_text_edit.get_line_count()
 
 func _check_win_condition():
-	if current_vlan_configured and ping_success:
+	# 🌟 ปรับให้ตรวจสอบเงื่อนไขความพร้อมครบทุกข้อก่อนปิดหน้าต่างจบเกม
+	if current_vlan_configured and ping_success and step_ping_passed:
 		_print_to_terminal("\n🟢 SWITCH CONFIGURATION COMPLETE! NETWORK STABLE.")
 		if "completed_modules_count" in Global:
 			Global.completed_modules_count += 1
