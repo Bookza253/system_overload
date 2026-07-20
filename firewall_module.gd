@@ -104,22 +104,24 @@ func _on_line_edit_ip_text_submitted(new_text: String) -> void:
 		command_input.call_deferred("grab_focus") # 🟢 ป้องกันการหลุดโฟกัสหลังการประมวลผลคำสั่งเสร็จสิ้น
 
 func _process_firewall_command(raw_command: String):
+	# แปลงคำสั่งที่รับมาเป็นตัวพิมพ์เล็กทั้งหมด และตัดช่องว่างส่วนเกินหัว-ท้ายออกเพื่อความปลอดภัย
+	var clean_cmd = raw_command.strip_edges().to_lower()
 	
 	# 🟩 [Authorization Mode 0]: User Mode (ตรวจสอบสิทธิ์การไต่ระดับระบบ)
 	if current_cli_mode == 0:
-		if raw_command == "enable":
+		if clean_cmd == "enable" or clean_cmd == "en":
 			current_cli_mode = 1
-		elif raw_command == "conf t" or raw_command.begins_with("access-list ") or raw_command == "exit" or raw_command == "ex" or raw_command == "save":
+		elif clean_cmd == "conf t" or clean_cmd.begins_with("access-list") or clean_cmd == "exit" or clean_cmd == "ex" or clean_cmd == "save":
 			_print_to_terminal("% Command rejected: ต้องกรอกคำสั่ง 'enable' เพื่อเข้าสิทธิ์แอดมินก่อน")
 		else:
 			_print_to_terminal("% Unknown command. (พิมพ์ 'enable' เพื่อเริ่มต้น)")
 
 	# 🟩 [Authorization Mode 1]: Privileged EXEC Mode (โหมดจัดการข้อมูลบันทึกและพอร์ต)
 	elif current_cli_mode == 1:
-		if raw_command == "configure terminal" or raw_command == "conf t":
+		if clean_cmd == "configure terminal" or clean_cmd == "conf t":
 			current_cli_mode = 2
 			_print_to_terminal("Enter configuration commands, one per line. End with 'exit' or 'ex'.")
-		elif raw_command == "save":
+		elif clean_cmd == "save":
 			if step_ip_blocked:
 				_print_to_terminal("\n🛡️ STATUS: ATTACK STOPPED! " + target_dept + " Dept. IS NOW SECURE.")
 				_print_to_terminal("🟢 FIREWALL RULES SUCCESSFULLY SAVED.")
@@ -127,7 +129,7 @@ func _process_firewall_command(raw_command: String):
 				if is_game_over: return
 			else:
 				_print_to_terminal("% Command rejected: คุณยังไม่ได้เขียนกฎบล็อก IP แฮกเกอร์เลย!")
-		elif raw_command == "exit" or raw_command == "ex": 
+		elif clean_cmd == "exit" or clean_cmd == "ex": 
 			_print_to_terminal("% Connection closed.")
 		else:
 			_print_to_terminal("% Unknown command. (พิมพ์ 'conf t' เพื่อตั้งค่า หรือ 'save' เพื่อบันทึก)")
@@ -135,25 +137,36 @@ func _process_firewall_command(raw_command: String):
 	# 🟩 [Authorization Mode 2]: Global Configuration Mode (โหมดแก้ไขไฟล์การตั้งค่าระบบหลัก)
 	elif current_cli_mode == 2:
 		
-		# ดักวิเคราะห์พารามิเตอร์การตั้งค่ากฎเพื่อคัดกรองหมายเลข IP แหล่งกำเนิดภัยพิบัติ
-		if raw_command.begins_with("access-list 1 deny "):
-			var ip_arg = raw_command.replace("access-list 1 deny ", "").strip_edges()
-			if ip_arg == target_ip: 
-				step_ip_blocked = true
-				_print_to_terminal("Success: Standard Access List 1 updated. Traffic from " + ip_arg + " is now dropped.")
+		# ดักจับคำสั่งวิเคราะห์พารามิเตอร์การตั้งค่ากฎ ACL (รองรับทั้งแบบเคาะเว้นวรรคเดี่ยวและหลายช่อง)
+		if clean_cmd.begins_with("access-list 1 deny"):
+			# แยกดึงเอาไอพีอาร์กิวเมนต์ตัวท้ายสุดออกมาตรวจสอบ
+			var parts = clean_cmd.split(" ", false)
+			var ip_arg = ""
+			if parts.size() >= 5:
+				ip_arg = parts[4].strip_edges() # ดึงค่าบล็อกลำดับที่ 5 (ต่อจาก access-list 1 deny)
 			else:
-				# Defensive Failure Logic: กรณีใส่ไอพีของแผนกปกติจะส่งผลให้ระบบการสื่อสารภายในพังทลาย
-				trigger_game_over("FATAL BLOCK ERROR:\nคุณใส่ IP ผิดพลาด! ไปสั่งบล็อกแผนกอื่นที่ไม่ได้โดนโจมตี ทำให้ระบบล่ม")
-				return
+				ip_arg = clean_cmd.replace("access-list 1 deny", "").strip_edges()
+				
+			if ip_arg == target_ip.to_lower() or ip_arg == "host " + target_ip.to_lower() or ip_arg.contains(target_ip.to_lower()): 
+				step_ip_blocked = true
+				_print_to_terminal("Success: Standard Access List 1 updated. Traffic from " + target_ip + " is now dropped.")
+			else:
+				# ป้องกันเผื่อผู้เรียนพิมพ์คำสั่ง ACL ขาดพิมพ์ไม่ครบ ไม่ให้ปรับแพ้ทันที ให้โอกาสพิมพ์ใหม่
+				if ip_arg == "":
+					_print_to_terminal("% Incomplete command: กรุณาระบุ IP ที่ต้องการบล็อกด้วย")
+				else:
+					# Defensive Failure Logic: กรณีใส่ไอพีของแผนกปกติจะส่งผลให้ระบบการสื่อสารภายในพังทลาย
+					trigger_game_over("FATAL BLOCK ERROR:\nคุณใส่ IP ผิดพลาด! ไปสั่งบล็อกแผนกอื่นที่ไม่ได้โดนโจมตี ทำให้ระบบล่ม")
+					return
 		
 		# ระบบตรวจจับแจ้งความผิดพลาดเพื่อแนะนำรูปแบบไวยากรณ์ (Syntax Suggestion Parser)
-		elif raw_command.begins_with("deny ip "):
-			_print_to_terminal("% Invalid command: ในโหมดเลเยอร์นี้ ต้องระบุกลุ่มหมายเลขด้วย เช่น 'access-list 1 deny host [IP]'")
+		elif clean_cmd.begins_with("deny ip "):
+			_print_to_terminal("% Invalid command: ในโหมดเลเยอร์นี้ ต้องระบุกลุ่มหมายเลขด้วย เช่น 'access-list 1 deny [IP]'")
 				
-		elif raw_command == "save":
+		elif clean_cmd == "save":
 			_print_to_terminal("% Command rejected: ไม่สามารถเซฟในโหมดปรับแต่งได้ กรุณาพิมพ์ 'ex' ออกไปก่อน")
 				
-		elif raw_command == "exit" or raw_command == "ex": 
+		elif clean_cmd == "exit" or clean_cmd == "ex": 
 			current_cli_mode = 1
 			_print_to_terminal("Leaving Configuration Mode.")
 		else:

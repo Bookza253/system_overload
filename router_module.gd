@@ -223,7 +223,7 @@ func _process_cli_command(raw_command: String):
 			current_cli_mode = 2
 			_print_to_terminal("Leaving Interface configuration mode.")
 		else:
-			_print_to_terminal("% Invalid syntax. (คำสั่งที่รองรับในโหมดนี้: 'switchport access vlan [เลข]', 'ex')")
+			_print_to_terminal("% Invalid syntax. (คำสั่งที่รองรับในโหมดนี้: 'switchport access vlan [เลข vlan]', 'ex')")
 
 	_print_prompt()
 
