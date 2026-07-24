@@ -1,6 +1,7 @@
 [gd_scene format=3 uid="uid://cnsch1bd3k5mo"]
 
 [ext_resource type="Script" uid="uid://cs85d1s6pqroo" path="res://router_module.gd" id="1_248w8"]
+[ext_resource type="PackedScene" uid="uid://crhbmwd0m3isn" path="res://stage_clear_popup.tscn" id="2_h6cmu"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_248w8"]
 
@@ -52,5 +53,12 @@ offset_right = 800.0
 offset_bottom = 596.0
 theme_override_styles/normal = SubResource("StyleBoxFlat_fywbg")
 theme_override_styles/focus = SubResource("StyleBoxFlat_wgose")
+
+[node name="StageClearPopup" parent="." unique_id=1392480477 instance=ExtResource("2_h6cmu")]
+layout_mode = 1
+offset_left = 10.0
+offset_top = 6.0
+offset_right = 10.0
+offset_bottom = 6.0
 
 [connection signal="text_submitted" from="Panel/LineEdit_IP" to="." method="_on_line_edit_ip_text_submitted"]

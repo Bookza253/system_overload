@@ -1,0 +1,85 @@
+[gd_scene format=3 uid="uid://dl1v5fyd6c5nh"]
+
+[ext_resource type="Script" uid="uid://jkv0d5ch88wg" path="res://tutorial_window.gd" id="1_kadll"]
+[ext_resource type="Script" uid="uid://b5byqdlp5pbac" path="res://network_diagram_drawer.gd" id="2_hpgqv"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_kadll"]
+bg_color = Color(0.043137256, 0.07450981, 0.12156863, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0, 0.93184817, 0.77816737, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+
+[node name="tutorial_window" type="Control" unique_id=936615376]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_kadll")
+
+[node name="Panelmain" type="Panel" parent="." unique_id=1081534924]
+layout_mode = 0
+offset_left = 510.0
+offset_top = 290.0
+offset_right = 1410.0
+offset_bottom = 790.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_kadll")
+
+[node name="Label_Title" type="Label" parent="Panelmain" unique_id=710090648]
+layout_mode = 0
+offset_left = 19.0
+offset_top = 18.0
+offset_right = 283.0
+offset_bottom = 74.0
+theme_override_font_sizes/font_size = 32
+
+[node name="RichTextLabel_Content" type="RichTextLabel" parent="Panelmain" unique_id=1428384432]
+layout_mode = 0
+offset_left = 18.0
+offset_top = 81.0
+offset_right = 605.0
+offset_bottom = 392.0
+theme_override_font_sizes/normal_font_size = 24
+
+[node name="Button_Next" type="Button" parent="Panelmain" unique_id=259570941]
+layout_mode = 0
+offset_left = 815.0
+offset_top = 410.0
+offset_right = 885.0
+offset_bottom = 480.0
+text = "Next"
+
+[node name="Button_Back" type="Button" parent="Panelmain" unique_id=2107080377]
+layout_mode = 0
+offset_left = 15.0
+offset_top = 410.0
+offset_right = 85.0
+offset_bottom = 480.0
+text = "Back"
+
+[node name="Button_Start" type="Button" parent="Panelmain" unique_id=1477794869]
+layout_mode = 0
+offset_left = 815.0
+offset_top = 410.0
+offset_right = 885.0
+offset_bottom = 480.0
+text = "Start"
+
+[node name="TextureRect_Visual" type="Control" parent="Panelmain" unique_id=1406912236]
+anchors_preset = 0
+offset_left = 623.0
+offset_top = 118.0
+offset_right = 807.0
+offset_bottom = 343.0
+script = ExtResource("2_hpgqv")
+
+[connection signal="pressed" from="Panelmain/Button_Next" to="." method="_on_button_next_pressed"]
+[connection signal="pressed" from="Panelmain/Button_Back" to="." method="_on_button_back_pressed"]
+[connection signal="pressed" from="Panelmain/Button_Start" to="." method="_on_button_start_pressed"]

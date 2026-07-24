@@ -1,0 +1,120 @@
+[gd_scene format=3 uid="uid://crhbmwd0m3isn"]
+
+[ext_resource type="Script" uid="uid://ct2hsbtfx47ri" path="res://stage_clear_popup.gd" id="1_0oerm"]
+
+[node name="StageClearPopup" type="Control" unique_id=1392480477]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_0oerm")
+
+[node name="ColorRect" type="ColorRect" parent="." unique_id=682894040]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 1.0
+offset_right = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 0.627451)
+
+[node name="Panel" type="Panel" parent="." unique_id=357841690]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -325.0
+offset_top = -225.0
+offset_right = 275.0
+offset_bottom = 195.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Label_Title" type="Label" parent="Panel" unique_id=1306605633]
+layout_mode = 0
+offset_top = 20.0
+offset_right = 199.0
+offset_bottom = 43.0
+text = "MISSION ACCOMPLISHED!"
+horizontal_alignment = 1
+
+[node name="Label_Stars" type="Label" parent="Panel" unique_id=236393376]
+layout_mode = 0
+offset_top = 60.0
+offset_right = 49.0
+offset_bottom = 83.0
+text = "★ ★ ★ (3 / 3 STARS)"
+horizontal_alignment = 1
+
+[node name="Panel_ScoreDetails" type="Panel" parent="Panel" unique_id=1020748326]
+custom_minimum_size = Vector2(500, 200)
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_top = 110.0
+offset_bottom = 310.0
+grow_horizontal = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Panel/Panel_ScoreDetails" unique_id=1758220676]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="Label_Header" type="Label" parent="Panel/Panel_ScoreDetails/VBoxContainer" unique_id=1832610910]
+layout_mode = 2
+text = "📊 SCORE BREAKDOWN:"
+
+[node name="Label_BaseScore" type="Label" parent="Panel/Panel_ScoreDetails/VBoxContainer" unique_id=809519800]
+layout_mode = 2
+text = "BASE SCORE: 1,000 PTS"
+
+[node name="Label_TimePenalty" type="Label" parent="Panel/Panel_ScoreDetails/VBoxContainer" unique_id=1213478058]
+layout_mode = 2
+text = "COMMAND ERRORS: 0 TIMES (-0 PTS)"
+
+[node name="Label_ErrorPenalty" type="Label" parent="Panel/Panel_ScoreDetails/VBoxContainer" unique_id=1760837054]
+layout_mode = 2
+
+[node name="Label_TotalScore" type="Label" parent="Panel/Panel_ScoreDetails/VBoxContainer" unique_id=1944323061]
+layout_mode = 2
+text = "TOTAL SCORE: 950 PTS"
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Panel" unique_id=976862965]
+custom_minimum_size = Vector2(550, 50)
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -285.0
+offset_top = 75.0
+offset_right = 265.0
+offset_bottom = 125.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Button_Retry" type="Button" parent="Panel/HBoxContainer" unique_id=1519659185]
+custom_minimum_size = Vector2(150, 40)
+layout_mode = 2
+text = "[ RETRY ]"
+
+[node name="Button_Dashboard" type="Button" parent="Panel/HBoxContainer" unique_id=337195051]
+custom_minimum_size = Vector2(150, 40)
+layout_mode = 2
+text = "[ DASHBOARD ]"
+
+[node name="Button_Next" type="Button" parent="Panel/HBoxContainer" unique_id=355352657]
+custom_minimum_size = Vector2(150, 40)
+layout_mode = 2
+text = "[ NEXT LEVEL ]"
+
+[connection signal="pressed" from="Panel/HBoxContainer/Button_Retry" to="." method="_on_button_retry_pressed"]
+[connection signal="pressed" from="Panel/HBoxContainer/Button_Dashboard" to="." method="_on_button_dashboard_pressed"]
+[connection signal="pressed" from="Panel/HBoxContainer/Button_Next" to="." method="_on_button_next_pressed"]
